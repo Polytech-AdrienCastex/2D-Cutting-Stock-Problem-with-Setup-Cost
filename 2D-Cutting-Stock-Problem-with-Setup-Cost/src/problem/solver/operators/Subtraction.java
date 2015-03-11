@@ -5,6 +5,8 @@
  */
 package problem.solver.operators;
 
+import problem.solver.ImageKind;
+
 /**
  *
  * @author Adrien
@@ -12,13 +14,13 @@ package problem.solver.operators;
 public class Subtraction extends INeighborOperator
 {
     @Override
-    public double[][] getFrom(double[][] array, int x, int y)
+    public double[] getFrom(double[] array, ImageKind imageKind)
     {
-        if(array[x][y] <= 0)
+        if(array[imageKind.getPatternIndex()] <= 0)
             return null;
         
-        double[][] value = copy(array);
-        value[x][y]--;
+        double[] value = copy(array);
+        value[imageKind.getPatternIndex()]--;
         return value;
     }
 }

@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import org.apache.commons.math3.optim.linear.LinearConstraint;
 import org.apache.commons.math3.optim.linear.Relationship;
+import problem.solver.operators.INeighborOperator;
 
 /**
  *
@@ -16,16 +17,19 @@ import org.apache.commons.math3.optim.linear.Relationship;
  */
 public class PatternManager
 {
-    public PatternManager(int nbPatterns, int nbImages, int maxImg, double[] constraintRightPart)
+    public PatternManager(int nbPatterns, int nbImages, int maxImg, double[] constraintRightPart, INeighborOperator[] neighborOperators)
     {
         this.nbPatterns = nbPatterns;
         this.nbImages = nbImages;
         this.maxImg = maxImg;
         this.constraintRightPart = constraintRightPart;
+        this.neighborOperators = neighborOperators;
         
         images = new double[nbImages][nbPatterns];
         Clear();
     }
+    
+    private INeighborOperator[] neighborOperators;
     
     private int nbPatterns;
     private int nbImages;
@@ -67,27 +71,16 @@ public class PatternManager
     private Collection<double[][]> getNeighbors()
     {
         Collection<double[][]> neighbors = new ArrayList<>();
-        double[][] temp = images;
+        double[][] temp;
         
         for(int i = 0; i < nbImages; i++)
             for(int p = 0; p < nbPatterns; p++)
-            {
-                // -
-                if(temp[i][p] > 0)
+                for(int o = 0; o < neighborOperators.length; o++)
                 {
-                    temp[i][p]--;
-                    neighbors.add(copy(temp));
-                    temp[i][p]++;
+                    temp = neighborOperators[o].getFrom(images, i, p);
+                    
+                    neighbors.add(temp);
                 }
-                
-                // +
-                if(temp[i][p] < maxImg)
-                {
-                    temp[i][p]++;
-                    neighbors.add(copy(temp));
-                    temp[i][p]--;
-                }
-            }
         
         return neighbors;
     }
