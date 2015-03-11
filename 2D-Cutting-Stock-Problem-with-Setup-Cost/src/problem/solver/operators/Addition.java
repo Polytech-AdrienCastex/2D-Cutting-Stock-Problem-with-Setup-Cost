@@ -11,9 +11,14 @@ package problem.solver.operators;
  */
 public class Addition extends INeighborOperator
 {
+    private final double MAX_VALUE = 15;
+    
     @Override
     public double[][] getFrom(double[][] array, int x, int y)
     {
+        if(array[x][y] >= MAX_VALUE)
+            return null;
+        
         double[][] value = copy(array);
         value[x][y]++;
         return value;
