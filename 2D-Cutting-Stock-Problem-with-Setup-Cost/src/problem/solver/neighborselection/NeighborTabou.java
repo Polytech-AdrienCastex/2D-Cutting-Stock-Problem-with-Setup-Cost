@@ -3,8 +3,11 @@ package problem.solver.neighborselection;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.stream.Stream;
+import org.apache.commons.math3.util.Pair;
 import problem.solver.ImageKind;
 import problem.solver.Pattern;
 import problem.solver.PatternKind;
@@ -17,18 +20,60 @@ import problem.solver.patternplacement.PatternPlacement;
  *
  * @author Adrien
  * 
- * Converge vers le minimum local.
+ * Méthode tabou
  */
-public class NeighborStandard extends INeighborSelector
+public class NeighborTabou extends INeighborSelector
 {
-    public NeighborStandard(INeighborOperator[] operators, PatternPlacement patternPlacement)
+    public NeighborTabou(INeighborOperator[] operators, int tabouListSize, PatternPlacement patternPlacement)
     {
         this.operators = operators;
         this.patternPlacement = patternPlacement;
+        this.tabouList = new LinkedList<>();
+        this.maxTabouSize = 0;
+    }
+    
+    private class TabouElement
+    {
+        public TabouElement(INeighborOperator operator, int index)
+        {
+            this.operator = operator;
+            this.index = index;
+        }
+        
+        private INeighborOperator operator;
+        private int index;
+        
+        public boolean isMatching(INeighborOperator operator, int index)
+        {
+            return this.index == index && this.operator.equals(operator);
+        }
+    }
+    
+    private final int maxTabouSize;
+    private final Queue<TabouElement> tabouList;
+    private void appendTabouValue(INeighborOperator operator, int index)
+    {
+        tabouList.add(new TabouElement(operator, index));
+        if(tabouList.size() >= maxTabouSize)
+            tabouList.poll();
     }
     
     private final INeighborOperator[] operators;
     private final PatternPlacement patternPlacement;
+    
+    private class SolutionTabou
+    {
+        public SolutionTabou(Solution solution, TabouElement tabouElement)
+        {
+            this.solution = solution;
+            this.tabouElement = tabouElement;
+        }
+        
+        private Solution solution;
+        private TabouElement tabouElement;
+        
+        
+    }
     
     @Override
     public Solution selectSolution(List<Solution> solutions) throws SolverException
@@ -43,7 +88,7 @@ public class NeighborStandard extends INeighborSelector
             
         return (Solution)stream.min(Comparator.comparing(s -> (int)s.getFitnessValue())).get();
     }
-
+    
     @Override
     public List<Pattern> getNeighbors(Pattern pattern)
     {

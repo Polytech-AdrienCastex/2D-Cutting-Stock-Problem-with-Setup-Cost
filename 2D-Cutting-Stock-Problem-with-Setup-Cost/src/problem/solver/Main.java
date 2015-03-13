@@ -7,6 +7,9 @@ import org.apache.commons.math3.optim.MaxIter;
 import org.apache.commons.math3.optim.PointValuePair;
 import org.apache.commons.math3.optim.linear.*;
 import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
+import problem.solver.neighborselection.NeighborStandard;
+import problem.solver.operators.Addition;
+import problem.solver.operators.INeighborOperator;
 
 
 public class Main
@@ -18,6 +21,35 @@ public class Main
     }
     public static void main(String[] args)
     {
+        PatternKind pk = new PatternKind(40, 60);
+        new ImageKind(24, 30, 246, pk);
+        new ImageKind(13, 56, 562, pk);
+        new ImageKind(14, 22, 1000, pk);
+        new ImageKind(9, 23, 3498, pk);
+        
+        Solution solution = new Solution(3, pk, new NeighborStandard(new INeighborOperator[]
+        {
+            new Addition()
+        }, null));
+        
+        
+        for(int i = 0; i < 50; i++)
+        {
+            System.out.println("*******************************");
+            solution.getNeighbors().stream().forEach(s -> System.out.println(s));
+
+            solution = solution.selectNextSolution();
+            System.out.println(solution);
+        }
+        
+        
+        
+        
+        
+        
+        
+        
+        /*
         double[][] images = new double[2][2];
         images[0][0] = 5;
         Collection<double[][]> neighbors = new ArrayList<>();
@@ -25,14 +57,7 @@ public class Main
         
         for(int i = 0; i < images.length; i++)
             for(int p = 0; p < images[0].length; p++)
-            {/*
-                // -
-                if(temp[i][p] > 0)
-                {
-                    temp[i][p]--;
-                    neighbors.add(copy(temp));
-                    temp[i][p]++;
-                }*/
+            {
                 
                 // +
                 if(temp[i][p] < 10)

@@ -35,9 +35,22 @@ public class Pattern
     private final double[] images;
     private final INeighborSelector neighborSelector;
     
+    public PatternKind getPatternKind()
+    {
+        return this.patternKind;
+    }
+    
     public double[] getImages()
     {
         return images;
+    }
+    public double getImage(int index)
+    {
+        return images[index];
+    }
+    public double getImage(ImageKind ik)
+    {
+        return getImage(ik.getPatternIndex());
     }
     
     public void Randomize(Random rnd)
@@ -53,6 +66,21 @@ public class Pattern
     
     public Collection<Pattern> getNeighbors()
     {
-        return neighborSelector.getNeighbors(this, patternKind);
+        return neighborSelector.getNeighbors(this);
+    }
+
+    @Override
+    public String toString()
+    {
+        StringBuilder str = new StringBuilder("( ");
+        
+        for(int i = 0; i < images.length; i++)
+        {
+            str.append(images[i]);
+            str.append(" ");
+        }
+        str.append(")");
+        
+        return str.toString();
     }
 }
