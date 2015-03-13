@@ -31,14 +31,14 @@ public class Solution implements Comparable
     {
         this.patterns = patterns;
         //this.neighborSelector = parent.neighborSelector;
-        this.fitnessValue = null;
+        this.fitnessValueSolution = null;
         this.patternKind = parent.patternKind;
     }
     public Solution(int numberOfPatterns, PatternKind patternKind, INextSolutionGenerator neighborSelector)
     {
         this.patterns = new Pattern[numberOfPatterns];
         //this.neighborSelector = neighborSelector;
-        this.fitnessValue = null;
+        this.fitnessValueSolution = null;
         this.patternKind = patternKind;
         /*
         for(int i = 0; i < numberOfPatterns; i++)
@@ -57,20 +57,37 @@ public class Solution implements Comparable
     //private final INextSolutionGenerator neighborSelector;
     private final PatternKind patternKind;
             
-    private Double fitnessValue;
+    private PointValuePair fitnessValueSolution;
+    private void computeFitnessValue()
+    {
+        LinearObjectiveFunction f = new LinearObjectiveFunction(
+                new double[] { 1, 1, 1 },
+                3*20);
+        fitnessValueSolution = new SimplexSolver()
+                .optimize(new MaxIter(100),
+                        f,
+                        new LinearConstraintSet(getConstraints()),
+                        GoalType.MINIMIZE,
+                        new NonNegativeConstraint(true));
+    }
+    
     public double getFitnessValue()
     {
-        if(fitnessValue != null)
-            return fitnessValue;
+        if(fitnessValueSolution != null)
+            return fitnessValueSolution.getValue();
         
-        LinearObjectiveFunction f = new LinearObjectiveFunction(new double[] { 1, 1, 1 }, 3*20);
+        computeFitnessValue();
         
-        SimplexSolver solver = new SimplexSolver();
-        PointValuePair solution = solver.optimize(new MaxIter(100), f, new LinearConstraintSet(getConstraints()), GoalType.MINIMIZE, new NonNegativeConstraint(true));
+        return fitnessValueSolution.getValue();
+    }
+    public double[] getPatternNumbers()
+    {
+        if(fitnessValueSolution != null)
+            return fitnessValueSolution.getFirst();
         
-        fitnessValue = solution.getValue();
+        computeFitnessValue();
         
-        return fitnessValue;
+        return fitnessValueSolution.getFirst();
     }
     
     private Collection<LinearConstraint> getConstraints()

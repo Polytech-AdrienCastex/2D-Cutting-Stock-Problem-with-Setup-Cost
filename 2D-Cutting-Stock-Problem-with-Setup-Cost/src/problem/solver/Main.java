@@ -9,8 +9,10 @@ import org.apache.commons.math3.optim.linear.*;
 import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
 import problem.solver.neighborselection.INextSolutionGenerator;
 import problem.solver.neighborselection.LocalMinimumReacher;
+import problem.solver.neighborselection.TabouMethod;
 import problem.solver.operators.Addition;
 import problem.solver.operators.INeighborOperator;
+import problem.solver.operators.Subtraction;
 
 
 public class Main
@@ -28,22 +30,43 @@ public class Main
         new ImageKind(14, 22, 1000, pk);
         new ImageKind(9, 23, 3498, pk);
         
+        /*
         INextSolutionGenerator generator = new LocalMinimumReacher(new INeighborOperator[]
         {
-            new Addition()
+            new Addition(),
+            new Subtraction()
         }, pk, null);
+        */
+        INextSolutionGenerator generator = new TabouMethod(new INeighborOperator[]
+        {
+            new Addition(),
+            new Subtraction()
+        }, pk, null, 100);
         
         Solution solution = new Solution(3, pk, generator);
         System.out.println(solution);
         
-        for(int i = 0; i < 1; i++)
+        int i = 0;
+        try
         {
-            System.out.println("*******************************");
-            //solution.getNeighbors().stream().forEach(s -> System.out.println(s));
+            for(i = 0; i < 500; i++)
+            {
+                System.out.println("*******************************");
+                //solution.getNeighbors().stream().forEach(s -> System.out.println(s));
 
-            solution = generator.selectNextSolution(solution);
-            System.out.println(solution);
+                solution = generator.selectNextSolution(solution);
+                System.out.println(solution);
+            }
         }
+        catch(Exception ex)
+        {}
+        System.out.println("*************FINAL***************");
+        System.out.println("i = " + i);
+        System.out.println(solution);
+        
+        System.out.println("----");
+        for(double d : solution.getPatternNumbers())
+            System.out.print("'" + d + "' ");
         
         
         

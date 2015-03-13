@@ -108,7 +108,12 @@ public abstract class INextSolutionGenerator
     
     public Solution selectNextSolution(Solution current) throws SolverException
     {
-        return selectNextSolution(current, getNeighbors(current));
+        List<Choice<Solution>> solutions = getNeighbors(current);
+        
+        if(solutions.isEmpty())
+            throw new SolverException("No more solution possible found.");
+        
+        return selectNextSolution(current, solutions);
     }
     
     protected abstract Solution selectNextSolution(Solution current, List<Choice<Solution>> solutions) throws SolverException;
