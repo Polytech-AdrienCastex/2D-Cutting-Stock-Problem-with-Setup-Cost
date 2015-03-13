@@ -7,7 +7,8 @@ import org.apache.commons.math3.optim.MaxIter;
 import org.apache.commons.math3.optim.PointValuePair;
 import org.apache.commons.math3.optim.linear.*;
 import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
-import problem.solver.neighborselection.NeighborStandard;
+import problem.solver.neighborselection.INextSolutionGenerator;
+import problem.solver.neighborselection.LocalMinimumReacher;
 import problem.solver.operators.Addition;
 import problem.solver.operators.INeighborOperator;
 
@@ -19,7 +20,7 @@ public class Main
         d[i][y]++;
         return d;
     }
-    public static void main(String[] args)
+    public static void main(String[] args) throws SolverException
     {
         PatternKind pk = new PatternKind(40, 60);
         new ImageKind(24, 30, 246, pk);
@@ -27,18 +28,20 @@ public class Main
         new ImageKind(14, 22, 1000, pk);
         new ImageKind(9, 23, 3498, pk);
         
-        Solution solution = new Solution(3, pk, new NeighborStandard(new INeighborOperator[]
+        INextSolutionGenerator generator = new LocalMinimumReacher(new INeighborOperator[]
         {
             new Addition()
-        }, null));
+        }, pk, null);
         
+        Solution solution = new Solution(3, pk, generator);
+        System.out.println(solution);
         
-        for(int i = 0; i < 50; i++)
+        for(int i = 0; i < 1; i++)
         {
             System.out.println("*******************************");
-            solution.getNeighbors().stream().forEach(s -> System.out.println(s));
+            //solution.getNeighbors().stream().forEach(s -> System.out.println(s));
 
-            solution = solution.selectNextSolution();
+            solution = generator.selectNextSolution(solution);
             System.out.println(solution);
         }
         

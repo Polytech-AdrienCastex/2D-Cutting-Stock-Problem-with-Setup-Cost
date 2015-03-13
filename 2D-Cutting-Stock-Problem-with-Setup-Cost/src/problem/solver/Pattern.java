@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
-import problem.solver.neighborselection.INeighborSelector;
+import problem.solver.neighborselection.INextSolutionGenerator;
 
 /**
  *
@@ -18,55 +18,52 @@ import problem.solver.neighborselection.INeighborSelector;
  */
 public class Pattern
 {
-    public Pattern(PatternKind patternKind, INeighborSelector neighborSelector)
+    public Pattern(PatternKind patternKind)
     {
         this.patternKind = patternKind;
-        this.neighborSelector = neighborSelector;
         this.images = new double[patternKind.getNumberOfImages()];
     }
     public Pattern(Pattern parent, double[] images)
     {
         this.patternKind = parent.patternKind;
-        this.neighborSelector = parent.neighborSelector;
         this.images = images;
     }
     
     private final PatternKind patternKind;
     private final double[] images;
-    private final INeighborSelector neighborSelector;
-    
+    /*
     public PatternKind getPatternKind()
     {
         return this.patternKind;
-    }
+    }*/
     
-    public double[] getImages()
+    public double[] getImageNumber()
     {
         return images;
     }
-    public double getImage(int index)
+    public double getImageNumber(int index)
     {
         return images[index];
     }
-    public double getImage(ImageKind ik)
+    public double getImageNumber(ImageKind ik)
     {
-        return getImage(ik.getPatternIndex());
+        return Pattern.this.getImageNumber(ik.getPatternIndex());
     }
     
-    public void Randomize(Random rnd)
+    public static Pattern createRandomPatter(PatternKind patternKind)
     {
-        Iterator<ImageKind> imageKinds = patternKind.getImageKinds().iterator();
+        return createRandomPatter(patternKind, new Random());
+    }
+    public static Pattern createRandomPatter(PatternKind patternKind, Random rnd)
+    {
+        Pattern pattern = new Pattern(patternKind);
         
-        for(int i = 0; i < images.length; i++)
+        for(ImageKind ik : patternKind.getImageKinds())
         {
-            ImageKind ik = imageKinds.next();
-            images[i] = rnd.nextInt(ik.getMaximumNumber());
+            pattern.images[ik.getPatternIndex()] = rnd.nextInt(ik.getMaximumNumber());
         }
-    }
-    
-    public Collection<Pattern> getNeighbors()
-    {
-        return neighborSelector.getNeighbors(this);
+        
+        return pattern;
     }
 
     @Override

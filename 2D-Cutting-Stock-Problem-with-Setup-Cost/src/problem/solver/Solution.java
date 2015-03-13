@@ -19,7 +19,7 @@ import org.apache.commons.math3.optim.linear.NonNegativeConstraint;
 import org.apache.commons.math3.optim.linear.Relationship;
 import org.apache.commons.math3.optim.linear.SimplexSolver;
 import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
-import problem.solver.neighborselection.INeighborSelector;
+import problem.solver.neighborselection.INextSolutionGenerator;
 
 /**
  *
@@ -30,28 +30,31 @@ public class Solution implements Comparable
     public Solution(Solution parent, Pattern[] patterns)
     {
         this.patterns = patterns;
-        this.neighborSelector = parent.neighborSelector;
+        //this.neighborSelector = parent.neighborSelector;
         this.fitnessValue = null;
         this.patternKind = parent.patternKind;
     }
-    public Solution(int numberOfPatterns, PatternKind patternKind, INeighborSelector neighborSelector)
+    public Solution(int numberOfPatterns, PatternKind patternKind, INextSolutionGenerator neighborSelector)
     {
         this.patterns = new Pattern[numberOfPatterns];
-        this.neighborSelector = neighborSelector;
+        //this.neighborSelector = neighborSelector;
         this.fitnessValue = null;
         this.patternKind = patternKind;
-        
+        /*
         for(int i = 0; i < numberOfPatterns; i++)
             patterns[i] = new Pattern(patternKind, neighborSelector);
+        */
         
         Random rnd = new Random();
-        while(!isPossible())
-            for(Pattern p : patterns)
-                p.Randomize(rnd);
+        do
+        {
+            for(int i = 0; i < numberOfPatterns; i++)
+                patterns[i] = Pattern.createRandomPatter(patternKind, rnd);
+        } while(!isPossible());
     }
     
     private final Pattern[] patterns;
-    private final INeighborSelector neighborSelector;
+    //private final INextSolutionGenerator neighborSelector;
     private final PatternKind patternKind;
             
     private Double fitnessValue;
@@ -80,7 +83,7 @@ public class Solution implements Comparable
         {
             pattern = new double[patterns.length];
             for(int i = 0; i < pattern.length; i++)
-                pattern[i] = patterns[i].getImage(ik);
+                pattern[i] = patterns[i].getImageNumber(ik);
             
             constraints.add(new LinearConstraint(pattern, Relationship.GEQ, ik.getDemand()));
         }
@@ -101,7 +104,7 @@ public class Solution implements Comparable
         
         for(Pattern p : patterns)
         {
-            double[] values = p.getImages();
+            double[] values = p.getImageNumber();
             for(int i = 0; i < values.length; i++)
                 images[i] |= values[i] > 0;
         }
@@ -111,11 +114,11 @@ public class Solution implements Comparable
                 return false;
         return true;
     }
-    
+    /*
     public Solution selectNextSolution() throws SolverException
     {
-        return neighborSelector.selectSolution(neighborSelector.getNeighbors(this));
-    }
+        return neighborSelector.selectNextSolution(this);
+    }*/
 
     @Override
     public int compareTo(Object o)
