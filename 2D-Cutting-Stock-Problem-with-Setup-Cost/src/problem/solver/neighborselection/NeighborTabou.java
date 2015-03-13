@@ -7,7 +7,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.stream.Stream;
-import org.apache.commons.math3.util.Pair;
 import problem.solver.ImageKind;
 import problem.solver.Pattern;
 import problem.solver.PatternKind;
@@ -72,6 +71,11 @@ public class NeighborTabou extends INeighborSelector
         private Solution solution;
         private TabouElement tabouElement;
         
+        
+    }
+    
+    public Solution selectNextSolution(Solution solution)
+    {
         
     }
     

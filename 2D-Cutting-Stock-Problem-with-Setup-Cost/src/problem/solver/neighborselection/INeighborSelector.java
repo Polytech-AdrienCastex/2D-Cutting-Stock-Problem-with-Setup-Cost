@@ -8,7 +8,6 @@ package problem.solver.neighborselection;
 import java.util.ArrayList;
 import java.util.List;
 import problem.solver.Pattern;
-import problem.solver.PatternKind;
 import problem.solver.Solution;
 import problem.solver.SolverException;
 

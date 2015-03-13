@@ -13,7 +13,16 @@ import problem.solver.ImageKind;
  */
 public class Addition extends INeighborOperator
 {
-    private final double MAX_VALUE = 15;
+    public Addition()
+    {
+        super();
+        this.setNegativeOperator(new Subtraction(this));
+    }
+    public Addition(INeighborOperator negativeOperator)
+    {
+        super();
+        this.setNegativeOperator(negativeOperator);
+    }
     
     @Override
     public double[] getFrom(double[] array, ImageKind imageKind)
