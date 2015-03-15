@@ -1,13 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package problem.solver.neighborselection;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 import problem.solver.ImageKind;
 import problem.solver.Pattern;
 import problem.solver.PatternKind;
@@ -16,10 +10,6 @@ import problem.solver.SolverException;
 import problem.solver.operators.INeighborOperator;
 import problem.solver.patternplacement.PatternPlacement;
 
-/**
- *
- * @author Adrien
- */
 public abstract class INextSolutionGenerator
 {
     public INextSolutionGenerator(INeighborOperator[] operators, PatternKind patternKind, PatternPlacement patternPlacement)

@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package problem.solver;
 
 import java.util.ArrayList;
@@ -17,10 +12,6 @@ import org.apache.commons.math3.optim.linear.Relationship;
 import org.apache.commons.math3.optim.linear.SimplexSolver;
 import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
 
-/**
- *
- * @author Adrien
- */
 public class LinearSolver
 {
     private final double[] results;

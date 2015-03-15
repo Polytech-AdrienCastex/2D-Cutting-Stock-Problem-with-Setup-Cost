@@ -1,4 +1,3 @@
-
 package problem.solver.neighborselection;
 
 import java.util.Comparator;

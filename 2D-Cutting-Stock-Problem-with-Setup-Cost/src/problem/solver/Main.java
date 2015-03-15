@@ -1,14 +1,6 @@
-
 package problem.solver;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import org.apache.commons.math3.optim.MaxIter;
-import org.apache.commons.math3.optim.PointValuePair;
-import org.apache.commons.math3.optim.linear.*;
-import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
 import problem.solver.neighborselection.INextSolutionGenerator;
-import problem.solver.neighborselection.LocalMinimumReacher;
 import problem.solver.neighborselection.TabouMethod;
 import problem.solver.operators.Addition;
 import problem.solver.operators.INeighborOperator;

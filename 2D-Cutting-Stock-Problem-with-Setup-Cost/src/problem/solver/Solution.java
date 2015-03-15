@@ -1,14 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package problem.solver;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
 import java.util.Random;
 import org.apache.commons.math3.optim.MaxIter;
 import org.apache.commons.math3.optim.PointValuePair;
@@ -21,10 +14,6 @@ import org.apache.commons.math3.optim.linear.SimplexSolver;
 import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
 import problem.solver.neighborselection.INextSolutionGenerator;
 
-/**
- *
- * @author Adrien
- */
 public class Solution implements Comparable
 {
     public Solution(Solution parent, Pattern[] patterns)

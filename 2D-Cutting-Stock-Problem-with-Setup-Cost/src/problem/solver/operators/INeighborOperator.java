@@ -1,12 +1,7 @@
-
 package problem.solver.operators;
 
 import problem.solver.ImageKind;
 
-/**
- *
- * @author Adrien
- */
 public abstract class INeighborOperator
 {
     public void setNegativeOperator(INeighborOperator negativeOperator)
@@ -25,8 +20,7 @@ public abstract class INeighborOperator
     {
         double[] copiedData = new double[data.length];
         
-        for(int i = 0; i < data.length; i++)
-            copiedData[i] = data[i];
+        System.arraycopy(data, 0, copiedData, 0, data.length);
         
         return copiedData;
     }
