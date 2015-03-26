@@ -1,5 +1,8 @@
 package problem.solver;
 
+import problem.solver.parameters.ImageKind;
+import problem.solver.parameters.PatternKind;
+import problem.solver.parameters.ProblemParameters;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Random;
@@ -19,41 +22,37 @@ public class Solution implements Comparable
     public Solution(Solution parent, Pattern[] patterns)
     {
         this.patterns = patterns;
-        //this.neighborSelector = parent.neighborSelector;
         this.fitnessValueSolution = null;
         this.patternKind = parent.patternKind;
+        this.problemParameters = parent.problemParameters;
     }
-    public Solution(int numberOfPatterns, PatternKind patternKind, INextSolutionGenerator neighborSelector)
+    public Solution(ProblemParameters problemParameters, PatternKind patternKind)
     {
-        this.patterns = new Pattern[numberOfPatterns];
-        //this.neighborSelector = neighborSelector;
+        this.patterns = new Pattern[problemParameters.getMaxNumberOfPatterns()];
         this.fitnessValueSolution = null;
         this.patternKind = patternKind;
-        /*
-        for(int i = 0; i < numberOfPatterns; i++)
-            patterns[i] = new Pattern(patternKind, neighborSelector);
-        */
+        this.problemParameters = problemParameters;
         
         Random rnd = new Random();
         do
         {
-            for(int i = 0; i < numberOfPatterns; i++)
+            for(int i = 0; i < patterns.length; i++)
                 patterns[i] = Pattern.createRandomPatter(patternKind, rnd);
         } while(!isPossible());
     }
     
+    private final ProblemParameters problemParameters;
     private final Pattern[] patterns;
-    //private final INextSolutionGenerator neighborSelector;
     private final PatternKind patternKind;
             
     private PointValuePair fitnessValueSolution;
     private void computeFitnessValue()
     {
         LinearObjectiveFunction f = new LinearObjectiveFunction(
-                new double[] { 1, 1, 1 },
-                3*20);
+                problemParameters.getCoefs(),
+                problemParameters.getConstant());
         fitnessValueSolution = new SimplexSolver()
-                .optimize(new MaxIter(100),
+                .optimize(new MaxIter(1000),
                         f,
                         new LinearConstraintSet(getConstraints()),
                         GoalType.MINIMIZE,
@@ -77,6 +76,18 @@ public class Solution implements Comparable
         computeFitnessValue();
         
         return fitnessValueSolution.getFirst();
+    }
+    
+    public double[] getImageNumbers()
+    {
+        double[] patterns = getPatternNumbers();
+        double[] images = new double[patternKind.getNumberOfImages()];
+        
+        for(ImageKind i : patternKind.getImageKinds())
+            for(int p = 0; p < patterns.length; p++)
+                images[i.getPatternIndex()] += patterns[p] * this.patterns[p].getImageNumber(i);
+        
+        return images;
     }
     
     private Collection<LinearConstraint> getConstraints()
@@ -120,11 +131,6 @@ public class Solution implements Comparable
                 return false;
         return true;
     }
-    /*
-    public Solution selectNextSolution() throws SolverException
-    {
-        return neighborSelector.selectNextSolution(this);
-    }*/
 
     @Override
     public int compareTo(Object o)

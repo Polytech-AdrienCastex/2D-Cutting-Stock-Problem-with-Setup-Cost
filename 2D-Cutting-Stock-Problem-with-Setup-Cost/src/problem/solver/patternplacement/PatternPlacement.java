@@ -6,7 +6,7 @@
 package problem.solver.patternplacement;
 
 import problem.solver.Pattern;
-import problem.solver.PatternKind;
+import problem.solver.parameters.PatternKind;
 
 /**
  *

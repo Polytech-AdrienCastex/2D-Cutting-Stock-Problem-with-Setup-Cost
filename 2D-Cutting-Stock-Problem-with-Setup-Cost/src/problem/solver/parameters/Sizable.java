@@ -1,4 +1,4 @@
-package problem.solver;
+package problem.solver.parameters;
 
 public abstract class Sizable
 {

@@ -5,7 +5,7 @@
  */
 package problem.solver.patternplacement;
 
-import problem.solver.ImageKind;
+import problem.solver.parameters.ImageKind;
 
 /**
  *

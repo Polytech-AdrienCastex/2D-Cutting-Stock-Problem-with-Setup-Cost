@@ -2,7 +2,7 @@ package problem.solver.neighborselection;
 
 import java.util.Comparator;
 import java.util.List;
-import problem.solver.PatternKind;
+import problem.solver.parameters.PatternKind;
 import problem.solver.Solution;
 import problem.solver.SolverException;
 import problem.solver.operators.INeighborOperator;

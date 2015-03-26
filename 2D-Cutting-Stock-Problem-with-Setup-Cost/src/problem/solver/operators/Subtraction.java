@@ -1,6 +1,6 @@
 package problem.solver.operators;
 
-import problem.solver.ImageKind;
+import problem.solver.parameters.ImageKind;
 
 public class Subtraction extends INeighborOperator
 {

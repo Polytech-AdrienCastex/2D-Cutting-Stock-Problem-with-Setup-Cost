@@ -1,6 +1,11 @@
 package problem.solver;
 
+import problem.solver.parameters.ImageKind;
+import problem.solver.parameters.PatternKind;
+import problem.solver.parameters.ProblemParameters;
+import problem.solver.cutpacking.CutInterfacer;
 import problem.solver.neighborselection.INextSolutionGenerator;
+import problem.solver.neighborselection.LocalMinimumReacher;
 import problem.solver.neighborselection.TabouMethod;
 import problem.solver.operators.Addition;
 import problem.solver.operators.INeighborOperator;
@@ -27,14 +32,22 @@ public class Main
         {
             new Addition(),
             new Subtraction()
-        }, pk, null);
-        */
+        }, pk, new CutInterfacer(pk));*/
+        
         INextSolutionGenerator generator = new TabouMethod(new INeighborOperator[]
         {
             new Addition(),
             new Subtraction()
-        }, pk, null, 100);
+        }, pk, new CutInterfacer(pk), 20);
         
+        ProblemParameters pp = new ProblemParameters(4, 1, 10);
+        FinalSolution fs = FinalSolution.findSolution(5000, 50, pp, pk, generator);
+        
+        System.out.println(fs);
+        
+        
+        
+        /*
         Solution solution = new Solution(3, pk, generator);
         System.out.println(solution);
         
@@ -59,7 +72,7 @@ public class Main
         System.out.println("----");
         for(double d : solution.getPatternNumbers())
             System.out.print("'" + d + "' ");
-        
+        */
         
         
         

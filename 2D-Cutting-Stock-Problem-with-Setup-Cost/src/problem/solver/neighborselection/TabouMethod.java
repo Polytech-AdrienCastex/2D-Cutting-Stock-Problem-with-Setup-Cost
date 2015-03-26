@@ -4,7 +4,7 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
-import problem.solver.PatternKind;
+import problem.solver.parameters.PatternKind;
 import problem.solver.Solution;
 import problem.solver.SolverException;
 import problem.solver.operators.INeighborOperator;
@@ -43,7 +43,8 @@ public class TabouMethod extends INextSolutionGenerator
                 .filter(s -> tabouList.stream().noneMatch(c -> c.getImageKind().equals(s.getImageKind()) && c.getOperator().equals(s.getOperator())))
                 // Minimize the fitness value
                 .min(Comparator.comparing(s -> s.getElement().getFitnessValue()))
-                .get();
+                // Return the value found or throw the exception
+                .orElseThrow(() -> new SolverException("No more solution possible found."));
         
         if(current.getFitnessValue() < choice.getElement().getFitnessValue())
             addTabou(choice);

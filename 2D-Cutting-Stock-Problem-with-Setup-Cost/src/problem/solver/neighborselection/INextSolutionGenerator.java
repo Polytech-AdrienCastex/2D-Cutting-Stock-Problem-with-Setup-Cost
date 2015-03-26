@@ -2,9 +2,9 @@ package problem.solver.neighborselection;
 
 import java.util.ArrayList;
 import java.util.List;
-import problem.solver.ImageKind;
+import problem.solver.parameters.ImageKind;
 import problem.solver.Pattern;
-import problem.solver.PatternKind;
+import problem.solver.parameters.PatternKind;
 import problem.solver.Solution;
 import problem.solver.SolverException;
 import problem.solver.operators.INeighborOperator;

@@ -1,5 +1,7 @@
 package problem.solver;
 
+import problem.solver.parameters.ImageKind;
+import problem.solver.parameters.PatternKind;
 import java.util.Random;
 
 public class Pattern
@@ -36,6 +38,18 @@ public class Pattern
         return Pattern.this.getImageNumber(ik.getPatternIndex());
     }
     
+    public static Pattern createPatter(PatternKind patternKind, double... values)
+    {
+        Pattern pattern = new Pattern(patternKind);
+        
+        for(ImageKind ik : patternKind.getImageKinds())
+        {
+            int id = ik.getPatternIndex();
+            pattern.images[id] = values[id];
+        }
+        
+        return pattern;
+    }
     public static Pattern createRandomPatter(PatternKind patternKind)
     {
         return createRandomPatter(patternKind, new Random());
@@ -45,9 +59,7 @@ public class Pattern
         Pattern pattern = new Pattern(patternKind);
         
         for(ImageKind ik : patternKind.getImageKinds())
-        {
             pattern.images[ik.getPatternIndex()] = rnd.nextInt(ik.getMaximumNumber());
-        }
         
         return pattern;
     }
