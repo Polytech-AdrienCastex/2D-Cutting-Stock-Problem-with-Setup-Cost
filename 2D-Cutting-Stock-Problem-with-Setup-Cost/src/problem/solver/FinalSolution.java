@@ -31,9 +31,9 @@ public class FinalSolution
         return solution;
     }
     
-    public double getFitness()
+    public int getFitness()
     {
-        double result = 0;
+        int result = 0;
         double[] coefs = problemParameters.getCoefs();
         double[] patterns = solution.getPatternNumbers();
         
@@ -82,8 +82,10 @@ public class FinalSolution
     @Override
     public String toString()
     {
-        StringBuilder sb = new StringBuilder("Images :\n");
+        StringBuilder sb = new StringBuilder("Structure :\n");
+        sb.append(this.getSolution());
         
+        sb.append("\nImages :\n");
         for(double d : this.getImages())
         {
             sb.append(d);

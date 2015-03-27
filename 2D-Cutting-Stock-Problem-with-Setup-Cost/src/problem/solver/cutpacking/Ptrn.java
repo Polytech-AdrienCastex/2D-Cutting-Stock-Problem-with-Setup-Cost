@@ -174,8 +174,8 @@ public void fillPattern() throws Exception{
                     return false;
             }
             while(block.getNbPieces() > 0);
-            //System.out.println("Unity " + block.getUnity()[0] + "  " + block.getUnity()[1]);
-            block = new Elmt(block.getId(), block.getSingleW(), block.getSingleH(), nbpcs);
+            
+            block = new Elmt(block.getId(), block.getWidth(), block.getHeight(), nbpcs);
         }
         while(nbpcs > 0 ); //&& !ok
     }
@@ -282,7 +282,7 @@ public void fillPattern() throws Exception{
                 prev.getDown().setW(prev.getDown().getW() - w);
             if(Localisation.VERTICAL.equals(root.getLocal()) && w > WIDTH - (prev.getRight().getX() + prev.getRight().getW()))
                 prev.getRight().setH(prev.getRight().getH() - h);
-            block.reverse();
+            block.rotate();
             //System.out.println("widroot = "+ root.getW() + " heiroot = " + root.getH() + "wid = "+ block.getW() + " hei= " + block.getH());
             return root;
         }

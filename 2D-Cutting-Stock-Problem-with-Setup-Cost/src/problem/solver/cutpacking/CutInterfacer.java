@@ -15,8 +15,9 @@ public class CutInterfacer extends PatternPlacement
         super(patternKind);
         
         Map<Integer, Elmt> dico = new HashMap<>();
-        for(ImageKind ik : patternKind.getImageKinds())
+        patternKind.getImageKinds().stream().forEach((ik) -> {
             dico.put(ik.getPatternIndex(), new Elmt(ik.getPatternIndex(), ik.getWidth(), ik.getHeight()));
+        });
         Ptrn.setDico(dico);
     }
     

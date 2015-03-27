@@ -60,7 +60,7 @@ public abstract class INextSolutionGenerator
                 double[] values = operator.getFrom(pattern.getImageNumber(), imageKind);
                 if(values != null)
                 {
-                    Pattern newPattern = new Pattern(pattern, values);
+                    Pattern newPattern = new Pattern(values);
 
                     if(patternPlacement == null || patternPlacement.isPossible(newPattern))
                         patterns.add(new Choice(newPattern, operator, imageKind));

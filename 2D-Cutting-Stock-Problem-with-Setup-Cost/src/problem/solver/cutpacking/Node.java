@@ -149,7 +149,8 @@ public class Node {
         return nds;
     }
     
-    public Localisation getLocal() {
+    public Localisation getLocal()
+    {
         return local;
     }
 }

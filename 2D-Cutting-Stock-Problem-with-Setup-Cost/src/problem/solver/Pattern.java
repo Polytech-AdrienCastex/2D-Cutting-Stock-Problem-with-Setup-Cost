@@ -8,22 +8,14 @@ public class Pattern
 {
     public Pattern(PatternKind patternKind)
     {
-        this.patternKind = patternKind;
         this.images = new double[patternKind.getNumberOfImages()];
     }
-    public Pattern(Pattern parent, double[] images)
+    public Pattern(double[] images)
     {
-        this.patternKind = parent.patternKind;
         this.images = images;
     }
     
-    private final PatternKind patternKind;
     private final double[] images;
-    /*
-    public PatternKind getPatternKind()
-    {
-        return this.patternKind;
-    }*/
     
     public double[] getImageNumber()
     {
