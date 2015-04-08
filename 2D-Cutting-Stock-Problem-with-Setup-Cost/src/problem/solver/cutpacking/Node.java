@@ -1,20 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package problem.solver.cutpacking;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 
-/**
- *
- * @author Arnaud
- */
-public class Node {
-    
+public class Node
+{
     private int x;
     private int y;
     private int w;
@@ -30,7 +20,7 @@ public class Node {
     private Node side;
     private Node bellow;
     
-     public Node(int _x, int _y, int _w, int _h, Localisation _loc)
+    public Node(int _x, int _y, int _w, int _h, Localisation _loc)
     {
         x = _x;
         y = _y;
@@ -45,107 +35,107 @@ public class Node {
     }
     
     @Override
-    public String toString(){
+    public String toString()
+    {
         return "this: {x:" + this.x + " y:" + this.y + 
                "}, right: {x:" + this.right.x + " y:" + this.right.y + "; w:" + this.right.w + " h:" + this.right.h +
                "}, down: {x:" + this.down.x + " y:" + this.down.y + "; w:" + this.down.w + " h:" + this.down.h + "}";
     }
       
-    public boolean isUsed() {
+    public boolean isUsed()
+    {
         return used;
     }
 
-    public void setUsed(boolean used) {
+    public void setUsed(boolean used)
+    {
         this.used = used;
     }
 
-    public Node getDown() {
+    public Node getDown()
+    {
         return down;
     }
 
-    public void setDown(Node down) {
+    public void setDown(Node down)
+    {
         this.down = down;
     }
 
 
-    public Node getRight() {
+    public Node getRight()
+    {
         return right;
     }
 
-    public void setRight(Node right) {
+    public void setRight(Node right)
+    {
         this.right = right;
     }
     
     
-    public Node getBellow() {
+    public Node getBellow()
+    {
         return bellow;
     }
 
-    public void setBellow(Node bellow) {
+    public void setBellow(Node bellow)
+    {
         this.bellow = bellow;
     }
 
-    public Node getSide() {
+    public Node getSide()
+    {
         return side;
     }
 
-    public void setSide(Node side) {
+    public void setSide(Node side)
+    {
         this.side = side;
     }
 
-    public int getX() {
+    public int getX()
+    {
         return x;
     }
 
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    public int getY() {
+    public int getY()
+    {
         return y;
     }
 
-    public void setY(int y) {
-        this.y = y;
-    }
-
-    public int getW() {
+    public int getW()
+    {
         return w;
     }
 
-    public void setW(int w) {
+    public void setW(int w)
+    {
         this.w = w;
     }
 
-    public int getH() {
+    public int getH()
+    {
         return h;
     }
 
-    public void setH(int h) {
+    public void setH(int h)
+    {
         this.h = h;
     }
   
-    public int getArea() {
+    public int getArea()
+    {
         return w * h;
     }
     
-    public ArrayList<Node> sortNodeByArea() {
-        ArrayList<Node> nds = new ArrayList<Node>();
+    public ArrayList<Node> sortNodeByArea()
+    {
+        ArrayList<Node> nds = new ArrayList<>();
         nds.add(right);
         nds.add(down);
-      //  nds.add(side);
-      //  nds.add(bellow);
-        Collections.sort(nds, new Comparator<Node>() {
-            @Override
-          public int compare(Node n1, Node n2) {
-              if (n1.getArea() < n2.getArea()) // (e1.getW() < e2.getW())
-                  return 1;
-              else if (n1.getArea() > n2.getArea()) // (e1.getW() > e2.getW())
-                  return -1;        	
-              else
-                  return 0;
-          }
-        });
+        
+        Collections.sort(nds, (n1, n2) -> (n1.getArea() < n2.getArea() ? 1 : (n1.getArea() > n2.getArea() ? -1 : 0)));
         return nds;
     }
     

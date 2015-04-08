@@ -1,35 +1,32 @@
 package problem.solver.cutpacking;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import problem.solver.parameters.ImageKind;
-import problem.solver.parameters.PatternKind;
 import problem.solver.parameters.Sizable;
 import problem.solver.patternplacement.ImageLocation;
 
 
 public class Elmt extends Sizable implements Cloneable
 {
-    public Elmt(int id, int w, int h)
+    public Elmt(ImageKind ik)
     {
-        super(w, h);
+        super(ik.getWidth(), ik.getHeight());
         
-        this.id = id;
+        this.ik = ik;
     } 
     
-    public Elmt(int id, int w, int h, int prices)
+    public Elmt(ImageKind ik, int pieces)
     {
-        this(id, w, h);
+        this(ik);
         
-        if(prices > 0)
-            this.pieces = prices;
-    } 
+        if(pieces > 0)
+            this.pieces = pieces;
+    }
     
-    private final int id;
+    private final ImageKind ik;
     private int pieces = 1;
     private Node fit;
     private boolean isRotated = false;
-
+    
     
     /* operates a 90° rotation of the element */
     public void rotate()
@@ -109,45 +106,9 @@ public class Elmt extends Sizable implements Cloneable
         return true;        
     }
     
-    public int maxByPattern()
+    public ImageKind getImageKind()
     {
-        int cmpt = 0;
-        Ptrn pat;
-        int nbElmts = Ptrn.getDico().size();
-        int[] test = new int[nbElmts];
-        for(int i = 0; i< nbElmts; i++)
-            test[i] = 0;
-        do{
-            test[this.id]++;
-            pat = new Ptrn(test);
-            cmpt++;
-        }
-        while(pat.fit());
-        
-        return cmpt;
-    }
-    
-    public int maxPerPattern()
-    {
-        int cmpt = 1;
-        Ptrn pat;
-        int nbElmts = Ptrn.getDico().size();
-        int[] test = new int[nbElmts];
-        for(int i = 0; i< nbElmts; i++)
-            test[i] = 0;
-        do{
-            test[this.id]++;
-            pat = new Ptrn(test);
-            cmpt++;
-        }
-        while(pat.fit());
-        
-        return cmpt;
-    }
-    
-    public int getId()
-    {
-        return id;
+        return ik;
     }
     
     public int getW()
@@ -194,7 +155,6 @@ public class Elmt extends Sizable implements Cloneable
         if(fit == null)
             return new ImageLocation[0];
         
-        ImageKind ik = new ImageKind(this.getWidth(), this.getHeight(), -1, new PatternKind(Ptrn.getWidth(), Ptrn.getHeight()));
         ImageLocation.Direction dir;
         int nbPieces = this.getNbPieces();
         
@@ -227,25 +187,6 @@ public class Elmt extends Sizable implements Cloneable
     public int getNbPieces()
     {
         return pieces;
-    }
-    
-    public Node getFit()
-    {
-        return fit;
-    }
-    
-    public int getX()
-    {
-        if(fit == null)
-            return -1;
-        return fit.getX();        
-    }
-    
-    public int getY()
-    {
-        if(fit == null)
-            return -1;
-        return fit.getY();        
     }
 
     public void setFit(Node fit)

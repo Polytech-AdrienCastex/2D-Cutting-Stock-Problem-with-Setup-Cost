@@ -10,29 +10,29 @@ import problem.solver.SolverException;
 import problem.solver.operators.INeighborOperator;
 import problem.solver.patternplacement.PatternPlacement;
 
-public class TabouMethod extends INextSolutionGenerator
+public class TabooMethod extends INextSolutionGenerator
 {
-    public TabouMethod(INeighborOperator[] operators, PatternKind patternKind, PatternPlacement patternPlacement, int numberOfTabouOperations)
+    public TabooMethod(INeighborOperator[] operators, PatternKind patternKind, PatternPlacement patternPlacement, int numberOfTabooOperations)
     {
         super(operators, patternKind, patternPlacement);
         
-        this.numberOfTabouOperations = numberOfTabouOperations;
-        this.tabouList = new LinkedList<>();
-        this.tabouListCurrentNumber = 0;
+        this.numberOfTabooOperations = numberOfTabooOperations;
+        this.tabooList = new LinkedList<>();
+        this.tabooListCurrentNumber = 0;
     }
     
-    private final int numberOfTabouOperations;
-    private final Queue<Choice<Solution>> tabouList;
-    private int tabouListCurrentNumber;
+    private final int numberOfTabooOperations;
+    private final Queue<Choice<Solution>> tabooList;
+    private int tabooListCurrentNumber;
     
-    private void addTabou(Choice<Solution> solution)
+    private void addTaboo(Choice<Solution> solution)
     {
-        if(tabouListCurrentNumber == numberOfTabouOperations)
-            tabouList.remove();
+        if(tabooListCurrentNumber == numberOfTabooOperations)
+            tabooList.remove();
         else
-            tabouListCurrentNumber++;
+            tabooListCurrentNumber++;
         
-        tabouList.add(solution);
+        tabooList.add(solution);
     }
 
     @Override
@@ -40,14 +40,14 @@ public class TabouMethod extends INextSolutionGenerator
     {
         Choice<Solution> choice = solutions.stream()
                 // Filter with only not banned operation
-                .filter(s -> tabouList.stream().noneMatch(c -> c.getImageKind().equals(s.getImageKind()) && c.getOperator().equals(s.getOperator())))
+                .filter(s -> tabooList.stream().noneMatch(c -> c.getImageKind().equals(s.getImageKind()) && c.getOperator().equals(s.getOperator())))
                 // Minimize the fitness value
                 .min(Comparator.comparing(s -> s.getElement().getFitnessValue()))
                 // Return the value found or throw the exception
                 .orElseThrow(() -> new SolverException("No more solution possible found."));
         
         if(current.getFitnessValue() < choice.getElement().getFitnessValue())
-            addTabou(choice);
+            addTaboo(choice);
         
         return choice.getElement();
     }

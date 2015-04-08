@@ -108,7 +108,7 @@ public class FinalSolution
         sb.append("\nAborted : ");
         sb.append(this.getAbortException().size());
         sb.append(" / ");
-        sb.append(this.numberOfRestart);
+        sb.append(this.numberOfRestart + 1);
         
         return sb.toString();
     }

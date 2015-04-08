@@ -3,6 +3,7 @@ package problem.solver;
 import problem.solver.parameters.ImageKind;
 import problem.solver.parameters.PatternKind;
 import java.util.Random;
+import java.util.stream.Stream;
 
 public class Pattern
 {
@@ -27,7 +28,7 @@ public class Pattern
     }
     public double getImageNumber(ImageKind ik)
     {
-        return Pattern.this.getImageNumber(ik.getPatternIndex());
+        return getImageNumber(ik.getPatternIndex());
     }
     
     public static Pattern createPatter(PatternKind patternKind, double... values)
