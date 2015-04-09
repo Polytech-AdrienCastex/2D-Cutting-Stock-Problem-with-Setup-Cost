@@ -29,7 +29,7 @@ public class PatternKind extends Sizable
     
     public void addImageKind(int sizeW, int sizeH, int demand)
     {
-        addImageKind(new ImageKind(sizeW, sizeH, demand, this));
+        new ImageKind(sizeW, sizeH, demand, this);
     }
     public void addImageKind(ImageKind imageKind)
     {

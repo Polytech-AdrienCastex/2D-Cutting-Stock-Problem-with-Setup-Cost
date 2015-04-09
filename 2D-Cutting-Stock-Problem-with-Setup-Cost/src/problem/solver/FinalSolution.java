@@ -37,7 +37,7 @@ public class FinalSolution
         double[] coefs = problemParameters.getCoefs();
         double[] patterns = solution.getPatternNumbers();
         
-        for(int i = 0; i < patterns.length; i++)
+        for(int i = 0; i < patterns.length && i < coefs.length; i++)
         {
             double value = (int)(Math.floor(coefs[i]) * Math.floor(patterns[i]));
             
@@ -88,14 +88,14 @@ public class FinalSolution
         sb.append("\nImages :\n");
         for(double d : this.getImages())
         {
-            sb.append(d);
+            sb.append((int)Math.floor(d));
             sb.append(" ");
         }
         
         sb.append("\nPatterns :\n");
         for(double d : this.getPatterns())
         {
-            sb.append(d);
+            sb.append((int)Math.floor(d));
             sb.append(" ");
         }
         

@@ -148,9 +148,10 @@ public class Solution implements Comparable
             str.append(" ");
         }
         
-        str.append("} = ");
+        str.append("} ≈ ");
         str.append(getFitnessValue());
         
         return str.toString();
     }
 }
+ 

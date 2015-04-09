@@ -54,18 +54,24 @@ public class Pattern
         
         return pattern;
     }
+    
+    public double[] toDoubles()
+    {
+        return getImageNumber();
+    }
 
     @Override
     public String toString()
     {
-        StringBuilder str = new StringBuilder("( ");
+        StringBuilder str = new StringBuilder("[ ");
         
         for(int i = 0; i < images.length; i++)
         {
-            str.append(images[i]);
-            str.append(" ");
+            if(i != 0)
+                str.append(", ");
+            str.append((int)images[i]);
         }
-        str.append(")");
+        str.append(" ]");
         
         return str.toString();
     }
