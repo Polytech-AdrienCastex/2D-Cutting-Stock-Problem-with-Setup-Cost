@@ -25,10 +25,10 @@ Math problem
 Pattern definition :
 ```java
 PatternKind pk = new PatternKind(40, 60);
-new ImageKind(24, 30, 246, pk);
-new ImageKind(13, 56, 562, pk);
-new ImageKind(14, 22, 1000, pk);
-new ImageKind(9, 23, 3498, pk);
+pk.addImageKind(24, 30, 246);  // add image { w = 24 ; h = 30 ; demand = 246  }
+pk.addImageKind(13, 56, 562);  // add image { w = 13 ; h = 56 ; demand = 562  }
+pk.addImageKind(14, 22, 1000); // add image { w = 14 ; h = 22 ; demand = 1000 }
+pk.addImageKind(9, 23, 3498);  // add image { w = 9  ; h = 23 ; demand = 3498 }
 ```
 
 Call :
