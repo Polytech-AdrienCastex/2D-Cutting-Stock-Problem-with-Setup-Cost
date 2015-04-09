@@ -3,7 +3,6 @@ package problem.solver;
 import problem.solver.parameters.ImageKind;
 import problem.solver.parameters.PatternKind;
 import java.util.Random;
-import java.util.stream.Stream;
 
 public class Pattern
 {
@@ -31,23 +30,22 @@ public class Pattern
         return getImageNumber(ik.getPatternIndex());
     }
     
-    public static Pattern createPatter(PatternKind patternKind, double... values)
+    public static Pattern createPattern(PatternKind patternKind, double... values)
     {
         Pattern pattern = new Pattern(patternKind);
         
-        for(ImageKind ik : patternKind.getImageKinds())
-        {
-            int id = ik.getPatternIndex();
-            pattern.images[id] = values[id];
-        }
+        patternKind.getImageKinds()
+                .stream()
+                .map((ik) -> ik.getPatternIndex())
+                .forEach((id) -> pattern.images[id] = values[id]);
         
         return pattern;
     }
-    public static Pattern createRandomPatter(PatternKind patternKind)
+    public static Pattern createRandomPattern(PatternKind patternKind)
     {
-        return createRandomPatter(patternKind, new Random());
+        return createRandomPattern(patternKind, new Random());
     }
-    public static Pattern createRandomPatter(PatternKind patternKind, Random rnd)
+    public static Pattern createRandomPattern(PatternKind patternKind, Random rnd)
     {
         Pattern pattern = new Pattern(patternKind);
         

@@ -27,6 +27,10 @@ public class PatternKind extends Sizable
         return nbImages;
     }
     
+    public void addImageKind(int sizeW, int sizeH, int demand)
+    {
+        addImageKind(new ImageKind(sizeW, sizeH, demand, this));
+    }
     public void addImageKind(ImageKind imageKind)
     {
         imageKinds.add(imageKind);

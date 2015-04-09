@@ -15,7 +15,6 @@ import org.apache.commons.math3.optim.linear.NonNegativeConstraint;
 import org.apache.commons.math3.optim.linear.Relationship;
 import org.apache.commons.math3.optim.linear.SimplexSolver;
 import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
-import problem.solver.neighborselection.INextSolutionGenerator;
 
 public class Solution implements Comparable
 {
@@ -37,7 +36,7 @@ public class Solution implements Comparable
         do
         {
             for(int i = 0; i < patterns.length; i++)
-                patterns[i] = Pattern.createRandomPatter(patternKind, rnd);
+                patterns[i] = Pattern.createRandomPattern(patternKind, rnd);
         } while(!isPossible());
     }
     

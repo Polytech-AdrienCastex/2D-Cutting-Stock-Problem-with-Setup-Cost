@@ -16,10 +16,10 @@ public class Main
     public static void main(String[] args) throws SolverException
     {
         PatternKind pk = new PatternKind(40, 60);
-        new ImageKind(24, 30, 246, pk);
-        new ImageKind(13, 56, 562, pk);
-        new ImageKind(14, 22, 1000, pk);
-        new ImageKind(9, 23, 3498, pk);
+        pk.addImageKind(24, 30, 246);
+        pk.addImageKind(13, 56, 562);
+        pk.addImageKind(14, 22, 1000);
+        pk.addImageKind(9, 23, 3498);
         
         /*
         INextSolutionGenerator generator = new LocalMinimumReacher(new INeighborOperator[]
