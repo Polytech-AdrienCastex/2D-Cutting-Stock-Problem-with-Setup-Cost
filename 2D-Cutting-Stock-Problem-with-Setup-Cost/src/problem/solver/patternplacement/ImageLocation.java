@@ -51,4 +51,10 @@ public class ImageLocation
     {
         return imageKind;
     }
+
+    @Override
+    public String toString()
+    {
+        return "ik:" + getImageKind().getPatternIndex() + " dir:" + getDirection() + " y:" + getY() + " x:" + getX();
+    }
 }

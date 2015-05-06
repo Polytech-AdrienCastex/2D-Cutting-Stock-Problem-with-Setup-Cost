@@ -15,6 +15,7 @@ import org.apache.commons.math3.optim.linear.NonNegativeConstraint;
 import org.apache.commons.math3.optim.linear.Relationship;
 import org.apache.commons.math3.optim.linear.SimplexSolver;
 import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
+import problem.solver.patternplacement.PatternPlacement;
 
 public class Solution implements Comparable
 {
@@ -24,22 +25,68 @@ public class Solution implements Comparable
         this.fitnessValueSolution = null;
         this.patternKind = parent.patternKind;
         this.problemParameters = parent.problemParameters;
+        this.patternPlacement = parent.patternPlacement;
     }
-    public Solution(ProblemParameters problemParameters, PatternKind patternKind)
+    public Solution(ProblemParameters problemParameters, PatternKind patternKind, PatternPlacement patternPlacement)
     {
         this.patterns = new Pattern[problemParameters.getMaxNumberOfPatterns()];
         this.fitnessValueSolution = null;
         this.patternKind = patternKind;
         this.problemParameters = problemParameters;
+        this.patternPlacement = patternPlacement;
         
         Random rnd = new Random();
+        System.out.println("AAAAA");
+        
         do
         {
-            for(int i = 0; i < patterns.length; i++)
+            if(patternKind.getNumberOfImages() < patterns.length)
+            {
+                for(int i = 0; i < patterns.length; i++)
+                {
+                    double[] imgs = new double[patternKind.getNumberOfImages()];
+                        imgs[i % patternKind.getNumberOfImages()] = rnd.nextInt(patternKind.getImageKinds().stream().skip(i % patternKind.getNumberOfImages()).findFirst().get().getMaximumNumber() - 1) + 1;
+                    patterns[i] = new Pattern(imgs);
+                }
+            }
+            else
+            {
+                // TODO generate patterns
+            }
+        }
+        while(!isPossible());
+        /*
+            do
+            {
+        for(int i = 0; i < patterns.length - 1; i++)
+        {
+            do
+            {
                 patterns[i] = Pattern.createRandomPattern(patternKind, rnd);
-        } while(!isPossible());
+            } while(!patternPlacement.isPossible(patterns[i]));
+        }
+        patterns[patterns.length - 1] = Pattern.createRandomPattern(patternKind, rnd, a());
+            } while(!patternPlacement.isPossible(patterns[patterns.length - 1]));*/
+        System.out.println("BBBBB");
     }
     
+    protected boolean[] a()
+    {
+        boolean[] images = new boolean[patternKind.getNumberOfImages()];
+        for(int i = 0; i < images.length; i++)
+            images[i] = false;
+        
+        for(int j = 0; j < patterns.length - 1; j++)
+        {
+            double[] values = patterns[j].getImageNumber();
+            for(int i = 0; i < values.length; i++)
+                images[i] |= values[i] > 0;
+        }
+        
+        return images;
+    }
+    
+    private final PatternPlacement patternPlacement;
     private final ProblemParameters problemParameters;
     private final Pattern[] patterns;
     private final PatternKind patternKind;
@@ -120,6 +167,9 @@ public class Solution implements Comparable
         
         for(Pattern p : patterns)
         {
+            if(!patternPlacement.isPossible(p))
+                return false;
+            
             double[] values = p.getImageNumber();
             for(int i = 0; i < values.length; i++)
                 images[i] |= values[i] > 0;

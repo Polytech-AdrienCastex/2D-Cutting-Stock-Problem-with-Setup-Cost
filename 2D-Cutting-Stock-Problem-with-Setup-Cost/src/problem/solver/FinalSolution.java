@@ -5,6 +5,7 @@ import problem.solver.parameters.PatternKind;
 import problem.solver.parameters.ProblemParameters;
 import java.util.ArrayList;
 import problem.solver.neighborselection.INextSolutionGenerator;
+import problem.solver.patternplacement.PatternPlacement;
 
 public class FinalSolution
 {
@@ -114,14 +115,17 @@ public class FinalSolution
     }
     
     
-    public static FinalSolution findSolution(int maxNumberOfLoop, int numberOfRestart, ProblemParameters problemParameters, PatternKind pk, INextSolutionGenerator generator)
+    public static FinalSolution findSolution(int maxNumberOfLoop, int numberOfRestart, ProblemParameters problemParameters, PatternKind pk, INextSolutionGenerator generator, PatternPlacement pp)
     {
         Solution bestSolution = null;
         ArrayList<Exception> abortException = new ArrayList<>();
         
         for(int restartId = 0; restartId <= numberOfRestart; restartId++)
         {
-            Solution solution = new Solution(problemParameters, pk);
+            if(restartId > 0)
+                System.out.println("Restart n°" + restartId + " out of " + numberOfRestart);
+            Solution solution = new Solution(problemParameters, pk, pp);
+            //if(solution.isPossible())
             if(bestSolution == null)
                 bestSolution = solution;
             else
@@ -135,6 +139,7 @@ public class FinalSolution
                 {
                     solution = generator.selectNextSolution(solution);
 
+            //if(solution.isPossible())
                     if(bestSolution.getFitnessValue() > solution.getFitnessValue())
                         bestSolution = solution;
                 }

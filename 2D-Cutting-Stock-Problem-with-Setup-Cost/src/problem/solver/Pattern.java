@@ -50,7 +50,22 @@ public class Pattern
         Pattern pattern = new Pattern(patternKind);
         
         for(ImageKind ik : patternKind.getImageKinds())
-            pattern.images[ik.getPatternIndex()] = rnd.nextInt(ik.getMaximumNumber());
+            if(ik.getMaximumNumber() / 4 == 0)
+                pattern.images[ik.getPatternIndex()] = rnd.nextInt(ik.getMaximumNumber());
+            else
+                pattern.images[ik.getPatternIndex()] = rnd.nextInt(ik.getMaximumNumber() / 4);
+        
+        return pattern;
+    }
+    public static Pattern createRandomPattern(PatternKind patternKind, Random rnd, boolean[] t)
+    {
+        Pattern pattern = new Pattern(patternKind);
+        
+        for(ImageKind ik : patternKind.getImageKinds())
+            if(ik.getMaximumNumber() / 4 - 1 <= 0)
+                pattern.images[ik.getPatternIndex()] = t[ik.getPatternIndex()] ? rnd.nextInt(ik.getMaximumNumber()) : rnd.nextInt(ik.getMaximumNumber() - 1) + 1;
+            else
+                pattern.images[ik.getPatternIndex()] = t[ik.getPatternIndex()] ? rnd.nextInt(ik.getMaximumNumber() / 4) : rnd.nextInt(ik.getMaximumNumber() / 4 - 1) + 1;
         
         return pattern;
     }
