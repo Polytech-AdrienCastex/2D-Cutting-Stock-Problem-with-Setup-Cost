@@ -30,7 +30,8 @@ public class Main
         pk.addImageKind(9, 23, 3498);
         pk.addImageKind(19, 23, 3498);
         */
-        PatternKind pk = FileLoader.loadFromFile(new File("S:\\OptDiscrete\\data\\data_20Salpha.txt"));
+        //PatternKind pk = FileLoader.loadFromFile(new File("S:\\OptDiscrete\\data\\data_20Salpha.txt"));
+        PatternKind pk = FileLoader.loadFromFile(new File("F:\\OperaPortable\\a.txt"));
         
         PatternPlacement ppl = new CutInterfacer(pk);
         

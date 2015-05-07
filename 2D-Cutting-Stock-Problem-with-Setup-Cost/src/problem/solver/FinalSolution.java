@@ -2,10 +2,13 @@ package problem.solver;
 
 import diagnosis.AverageMaker;
 import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Optional;
+import java.util.stream.IntStream;
+import problem.solver.neighborselection.INextSolutionGenerator;
 import problem.solver.parameters.PatternKind;
 import problem.solver.parameters.ProblemParameters;
-import java.util.ArrayList;
-import problem.solver.neighborselection.INextSolutionGenerator;
 import problem.solver.patternplacement.PatternPlacement;
 
 public class FinalSolution
@@ -118,9 +121,33 @@ public class FinalSolution
     
     public static FinalSolution findSolution(int maxNumberOfLoop, int numberOfRestart, ProblemParameters problemParameters, PatternKind pk, INextSolutionGenerator generator, PatternPlacement pp)
     {
-        Solution bestSolution = null;
+        //Solution bestSolution = null;
         ArrayList<Exception> abortException = new ArrayList<>();
         
+        Solution bestSolution = IntStream.rangeClosed(0, numberOfRestart)
+                .parallel()
+                .mapToObj(restartId -> 
+                {
+                    try
+                    {
+                        Solution solution = new Solution(problemParameters, pk, pp);
+                        Solution bs = solution;
+                        for(int i = 0; i < maxNumberOfLoop; i++)
+                        {
+                            solution = generator.selectNextSolution(solution);
+                            
+                            if(bs.getFitnessValue() > solution.getFitnessValue())
+                                bs = solution;
+                        }
+                        return bs;
+                    }
+                    catch(Exception ex)
+                    {
+                        abortException.add(ex);
+                        return null;
+                    }
+                }).max(Comparator.comparing(s -> s.getFitnessValue())).get();
+        /*
         for(int restartId = 0; restartId <= numberOfRestart; restartId++)
         {
             if(restartId > 0)
@@ -152,7 +179,7 @@ public class FinalSolution
             {
                 abortException.add(ex);
             }
-        }
+        }*/
         
         return new FinalSolution(numberOfRestart, abortException, bestSolution, problemParameters);
     }

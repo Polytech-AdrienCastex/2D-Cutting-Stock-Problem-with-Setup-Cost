@@ -197,11 +197,9 @@ public class Solution implements Comparable
         for(int i = 0; i < images.length; i++)
             images[i] = false;
         
+                
         for(Pattern p : patterns)
         {
-            if(!patternPlacement.isPossible(p))
-                return false;
-            
             double[] values = p.getImageNumber();
             for(int i = 0; i < values.length; i++)
                 images[i] |= values[i] > 0;
@@ -211,7 +209,11 @@ public class Solution implements Comparable
         for(boolean b : images)
             if(!b)
                 return false;
-        return true;
+        
+        return Arrays.asList(patterns)
+                .parallelStream()
+                .map(p -> patternPlacement.isPossible(p))
+                .allMatch(b -> b);
     }
 
     @Override
