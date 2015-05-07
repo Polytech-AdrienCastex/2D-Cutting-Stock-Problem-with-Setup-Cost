@@ -126,9 +126,6 @@ public class Ptrn
         node.setDown(new Node(node.getX(), node.getY() + h, w, node.getH() - h, Localisation.VERTICAL));
         node.setRight(new Node(node.getX() + w, node.getY(), node.getW() - w, h, Localisation.HORIZONTAL));
 
-        node.setBellow(new Node(node.getX(), node.getY() + h, w, node.getH() - h, Localisation.VERTICAL));
-        node.setSide(new Node(node.getX() + w, node.getY(), node.getW() - w, h, Localisation.HORIZONTAL));
-
         /* we extand area's spaces when possible*/
         node.getDown().setW(node.getDown().getW() + node.getRight().getW());
         node.getRight().setH(node.getRight().getH() + node.getDown().getH());

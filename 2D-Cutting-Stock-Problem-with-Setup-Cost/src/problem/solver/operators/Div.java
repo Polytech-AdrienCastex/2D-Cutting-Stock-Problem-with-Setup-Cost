@@ -4,15 +4,23 @@ import problem.solver.parameters.ImageKind;
 
 public class Div extends INeighborOperator
 {
-    public Div()
+    public Div(double coef)
     {
         super();
+        this.coef = coef;
         this.setNegativeOperator(new Mul(this));
     }
     public Div(INeighborOperator negativeOperator)
     {
         super();
+        this.coef = ((Mul)negativeOperator).getCoef();
         this.setNegativeOperator(negativeOperator);
+    }
+    
+    private final double coef;
+    public double getCoef()
+    {
+        return coef;
     }
     
     @Override

@@ -30,17 +30,6 @@ public class Pattern
         return getImageNumber(ik.getPatternIndex());
     }
     
-    public static Pattern createPattern(PatternKind patternKind, double... values)
-    {
-        Pattern pattern = new Pattern(patternKind);
-        
-        patternKind.getImageKinds()
-                .stream()
-                .map((ik) -> ik.getPatternIndex())
-                .forEach((id) -> pattern.images[id] = values[id]);
-        
-        return pattern;
-    }
     public static Pattern createRandomPattern(PatternKind patternKind)
     {
         return createRandomPattern(patternKind, new Random());

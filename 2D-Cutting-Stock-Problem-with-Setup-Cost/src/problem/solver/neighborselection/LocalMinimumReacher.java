@@ -18,7 +18,7 @@ public class LocalMinimumReacher extends INextSolutionGenerator
     @Override
     protected Solution selectNextSolution(Solution current, List<Choice<Solution>> solutions) throws SolverException
     {
-        return solutions.stream()
+        return solutions.parallelStream()
                 // Minimize the fitness value
                 .min(Comparator.comparing(s -> s.getElement().getFitnessValue()))
                 .get().getElement();

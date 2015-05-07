@@ -30,7 +30,7 @@ public class Main
         pk.addImageKind(9, 23, 3498);
         pk.addImageKind(19, 23, 3498);
         */
-        PatternKind pk = FileLoader.loadFromFile(new File("C:\\Users\\Adrien\\Downloads\\download.txt"));
+        PatternKind pk = FileLoader.loadFromFile(new File("S:\\OptDiscrete\\data\\data_20Salpha.txt"));
         
         PatternPlacement ppl = new CutInterfacer(pk);
         
@@ -45,12 +45,16 @@ public class Main
         {
             new Addition(),
             new Subtraction(),
-            new Mul(),
-            new Div()
+            new Mul(2.0),
+            new Div(2.0),
+            new Mul(4.0),
+            new Div(4.0),
+            new Mul(8.0),
+            new Div(8.0)
         }, pk, ppl, 20);
         
-        ProblemParameters pp = new ProblemParameters(5, 1, 20);
-        FinalSolution fs = FinalSolution.findSolution(1000, 5, pp, pk, generator, ppl);
+        ProblemParameters pp = new ProblemParameters(10, 1, 20);
+        FinalSolution fs = FinalSolution.findSolution(10000, 0, pp, pk, generator, ppl);
         
         for(Pattern p : fs.getSolution().getPatterns())
         {
@@ -64,6 +68,16 @@ public class Main
         System.out.println("************************************");
         
         System.out.println(fs);
+        
+        fs.printErrors();
+        
+        System.out.println("****************** Diagnosis ******************");
+        System.out.println("isPossible() : " + Math.round(Solution.avg.getValue()) + " ns");
+        System.out.println("next(Solution) . loop 1 : " + Math.round(INextSolutionGenerator.avg1.getValue()) + " ns");
+        System.out.println("next(Solution) . loop 2 : " + Math.round(INextSolutionGenerator.avg2.getValue()) + " ns");
+        System.out.println("next(Pattern) : " + Math.round(INextSolutionGenerator.avg3.getValue()) + " ns");
+        System.out.println("getNeighbors(Solution) : " + Math.round(INextSolutionGenerator.avg4.getValue()) + " ns");
+        System.out.println("selectNextSolution(...) : " + Math.round(INextSolutionGenerator.avg5.getValue()) + " ns");
     }
     
 }

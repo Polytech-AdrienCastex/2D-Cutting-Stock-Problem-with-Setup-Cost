@@ -1,9 +1,12 @@
 package problem.solver;
 
+import diagnosis.AverageMaker;
+import diagnosis.TimeDiagnosis;
 import problem.solver.parameters.ImageKind;
 import problem.solver.parameters.PatternKind;
 import problem.solver.parameters.ProblemParameters;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Random;
 import org.apache.commons.math3.optim.MaxIter;
@@ -36,25 +39,56 @@ public class Solution implements Comparable
         this.patternPlacement = patternPlacement;
         
         Random rnd = new Random();
-        System.out.println("AAAAA");
-        
+        boolean retry;
         do
         {
+            retry = false;
+            
+            for(int i = 0; i < Math.min(patternKind.getNumberOfImages(), patterns.length); i++)
+            {
+                double[] imgs = new double[patternKind.getNumberOfImages()];
+                imgs[i] = rnd.nextInt(patternKind.getImageKinds().stream().skip(i).findFirst().get().getMaximumNumber() - 1) + 1;
+                patterns[i] = new Pattern(imgs);
+            }
+            
             if(patternKind.getNumberOfImages() < patterns.length)
             {
-                for(int i = 0; i < patterns.length; i++)
+                for(int i = patternKind.getNumberOfImages(); i < patterns.length; i++)
                 {
                     double[] imgs = new double[patternKind.getNumberOfImages()];
-                        imgs[i % patternKind.getNumberOfImages()] = rnd.nextInt(patternKind.getImageKinds().stream().skip(i % patternKind.getNumberOfImages()).findFirst().get().getMaximumNumber() - 1) + 1;
+                    imgs[i % patternKind.getNumberOfImages()] = rnd.nextInt(patternKind.getImageKinds().stream().skip(i % patternKind.getNumberOfImages()).findFirst().get().getMaximumNumber() - 1) + 1;
                     patterns[i] = new Pattern(imgs);
                 }
             }
-            else
+            else if(patternKind.getNumberOfImages() > patterns.length)
             {
-                // TODO generate patterns
+                int id = -1;
+                for(int i = patterns.length; i < patternKind.getNumberOfImages(); i++)
+                {
+                    int nbTry = 0;
+                    int max = patternKind.getImageKinds().stream().skip(i).findFirst().get().getMaximumNumber();
+                    do
+                    {
+                        if(id == 0)
+                        {
+                            nbTry++;
+                            if(nbTry >= 200)
+                            {
+                                retry = true;
+                                break;
+                            }
+                        }
+                        id = (id + 1) % patterns.length;
+                        double[] imgs = Arrays.copyOf(patterns[id].getImageNumber(), patternKind.getNumberOfImages());
+                        imgs[i] = rnd.nextInt(max - 1)/2 + 1;
+                        patterns[id] = new Pattern(imgs);
+                    } while(!patternPlacement.isPossible(patterns[id]));
+                    if(retry)
+                        break;
+                }
             }
         }
-        while(!isPossible());
+        while(retry || !isPossible());
         /*
             do
             {
@@ -67,7 +101,6 @@ public class Solution implements Comparable
         }
         patterns[patterns.length - 1] = Pattern.createRandomPattern(patternKind, rnd, a());
             } while(!patternPlacement.isPossible(patterns[patterns.length - 1]));*/
-        System.out.println("BBBBB");
     }
     
     protected boolean[] a()
@@ -94,12 +127,9 @@ public class Solution implements Comparable
     private PointValuePair fitnessValueSolution;
     private void computeFitnessValue()
     {
-        LinearObjectiveFunction f = new LinearObjectiveFunction(
-                problemParameters.getCoefs(),
-                problemParameters.getConstant());
         fitnessValueSolution = new SimplexSolver()
-                .optimize(new MaxIter(1000),
-                        f,
+                .optimize(new MaxIter(500),
+                        problemParameters.getObjectiveFunction(),
                         new LinearConstraintSet(getConstraints()),
                         GoalType.MINIMIZE,
                         new NonNegativeConstraint(true));
@@ -159,8 +189,10 @@ public class Solution implements Comparable
         return patterns;
     }
     
+    public static AverageMaker avg = new AverageMaker();
     public boolean isPossible()
     {
+        TimeDiagnosis td = new TimeDiagnosis();
         boolean[] images = new boolean[patternKind.getNumberOfImages()];
         for(int i = 0; i < images.length; i++)
             images[i] = false;
@@ -175,6 +207,7 @@ public class Solution implements Comparable
                 images[i] |= values[i] > 0;
         }
         
+        avg.add(td.tick());
         for(boolean b : images)
             if(!b)
                 return false;

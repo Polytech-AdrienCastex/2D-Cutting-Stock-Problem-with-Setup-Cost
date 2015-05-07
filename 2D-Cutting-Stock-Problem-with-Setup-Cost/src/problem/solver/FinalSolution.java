@@ -1,5 +1,6 @@
 package problem.solver;
 
+import diagnosis.AverageMaker;
 import java.io.PrintStream;
 import problem.solver.parameters.PatternKind;
 import problem.solver.parameters.ProblemParameters;
@@ -124,7 +125,10 @@ public class FinalSolution
         {
             if(restartId > 0)
                 System.out.println("Restart n°" + restartId + " out of " + numberOfRestart);
+            
+            System.out.println("Recherche d'une solution de départ...");
             Solution solution = new Solution(problemParameters, pk, pp);
+            System.out.println("Solution de départ trouvée. Application de l'algorithme...");
             //if(solution.isPossible())
             if(bestSolution == null)
                 bestSolution = solution;

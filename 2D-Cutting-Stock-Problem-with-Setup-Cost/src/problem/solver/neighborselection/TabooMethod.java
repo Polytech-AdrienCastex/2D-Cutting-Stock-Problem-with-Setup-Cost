@@ -38,9 +38,9 @@ public class TabooMethod extends INextSolutionGenerator
     @Override
     protected Solution selectNextSolution(Solution current, List<Choice<Solution>> solutions) throws SolverException
     {
-        Choice<Solution> choice = solutions.stream()
+        Choice<Solution> choice = solutions.parallelStream()
                 // Filter with only not banned operation
-                .filter(s -> tabooList.stream().noneMatch(c -> c.getImageKind().equals(s.getImageKind()) && c.getOperator().equals(s.getOperator())))
+                .filter(s -> tabooList.parallelStream().noneMatch(c -> c.getImageKind().equals(s.getImageKind()) && c.getOperator().equals(s.getOperator())))
                 // Minimize the fitness value
                 .min(Comparator.comparing(s -> s.getElement().getFitnessValue()))
                 // Return the value found or throw the exception

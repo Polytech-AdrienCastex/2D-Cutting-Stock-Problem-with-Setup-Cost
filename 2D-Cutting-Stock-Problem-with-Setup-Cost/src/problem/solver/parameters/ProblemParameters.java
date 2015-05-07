@@ -1,5 +1,7 @@
 package problem.solver.parameters;
 
+import org.apache.commons.math3.optim.linear.LinearObjectiveFunction;
+
 public class ProblemParameters
 {
     public ProblemParameters(int maxNumberOfPatterns, int printPrice, int patternPrice)
@@ -12,6 +14,8 @@ public class ProblemParameters
         this.constant = maxNumberOfPatterns * patternPrice;
         this.maxNumberOfPatterns = maxNumberOfPatterns;
         this.patternPrice = patternPrice;
+        
+        f = new LinearObjectiveFunction(getCoefs(), getConstant());
     }
     
     private final double[] coefs;
@@ -36,5 +40,11 @@ public class ProblemParameters
     public int getMaxNumberOfPatterns()
     {
         return maxNumberOfPatterns;
+    }
+    
+    private final LinearObjectiveFunction f;
+    public LinearObjectiveFunction getObjectiveFunction()
+    {
+        return f;
     }
 }

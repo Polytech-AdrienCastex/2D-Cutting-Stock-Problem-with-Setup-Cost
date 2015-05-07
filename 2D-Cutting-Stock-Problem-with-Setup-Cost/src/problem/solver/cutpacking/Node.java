@@ -17,9 +17,6 @@ public class Node
     private Node right;
     private Node down;
     
-    private Node side;
-    private Node bellow;
-    
     public Node(int _x, int _y, int _w, int _h, Localisation _loc)
     {
         x = _x;
@@ -74,25 +71,6 @@ public class Node
     }
     
     
-    public Node getBellow()
-    {
-        return bellow;
-    }
-
-    public void setBellow(Node bellow)
-    {
-        this.bellow = bellow;
-    }
-
-    public Node getSide()
-    {
-        return side;
-    }
-
-    public void setSide(Node side)
-    {
-        this.side = side;
-    }
 
     public int getX()
     {

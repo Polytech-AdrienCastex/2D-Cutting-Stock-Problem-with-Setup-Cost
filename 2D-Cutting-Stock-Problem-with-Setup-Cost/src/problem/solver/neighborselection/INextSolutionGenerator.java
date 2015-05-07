@@ -1,7 +1,14 @@
 package problem.solver.neighborselection;
 
+import diagnosis.AverageMaker;
+import diagnosis.TimeDiagnosis;
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.stream.IntStream;
 import problem.solver.parameters.ImageKind;
 import problem.solver.Pattern;
 import problem.solver.parameters.PatternKind;
@@ -14,13 +21,17 @@ public abstract class INextSolutionGenerator
 {
     public INextSolutionGenerator(INeighborOperator[] operators, PatternKind patternKind, PatternPlacement patternPlacement)
     {
+        this(Arrays.asList(operators), patternKind, patternPlacement);
+    }
+    public INextSolutionGenerator(List<INeighborOperator> operators, PatternKind patternKind, PatternPlacement patternPlacement)
+    {
         this.operators = operators;
         this.patternKind = patternKind;
         this.patternPlacement = patternPlacement;
     }
     
     private final PatternKind patternKind;
-    private final INeighborOperator[] operators;
+    private final List<INeighborOperator> operators;
     private final PatternPlacement patternPlacement;
     
     protected class Choice<T>
@@ -54,7 +65,10 @@ public abstract class INextSolutionGenerator
     {
         List<Choice<Pattern>> patterns = new ArrayList<>();
         
-        for(INeighborOperator operator : operators)
+        TimeDiagnosis td = new TimeDiagnosis();
+        operators.parallelStream().forEach(operator -> {
+        //for(INeighborOperator operator : operators)
+            /*
             for(ImageKind imageKind : patternKind.getImageKinds())
             {
                 double[] values = operator.getFrom(pattern.getImageNumber(), imageKind);
@@ -65,22 +79,50 @@ public abstract class INextSolutionGenerator
                     if(patternPlacement == null || patternPlacement.isPossible(newPattern))
                         patterns.add(new Choice(newPattern, operator, imageKind));
                 }
-            }
+            }*/
+            for(ImageKind imageKind : patternKind.getImageKinds())
+            {
+                double[] values = operator.getFrom(pattern.getImageNumber(), imageKind);
+                if(values != null)
+                {
+                    Pattern newPattern = new Pattern(values);
+
+                    if(patternPlacement == null || patternPlacement.isPossible(newPattern))
+                        return new Choice(newPattern, operator, imageKind);
+                    else
+                        return null;
+                }
+            }});
+        avg3.add(td.tick());
         
         return patterns;
     }
     
+    public static AverageMaker avg1 = new AverageMaker();
+    public static AverageMaker avg2 = new AverageMaker();
+    public static AverageMaker avg3 = new AverageMaker();
+    public static AverageMaker avg4 = new AverageMaker();
+    public static AverageMaker avg5 = new AverageMaker();
     protected List<Choice<Solution>> getNeighbors(Solution solution) throws SolverException
     {
         List<Choice<Solution>> solutions = new ArrayList<>();
-        Pattern[] ps;
         Pattern[] patterns = solution.getPatterns();
         
+        //TimeDiagnosis td1 = new TimeDiagnosis();
+        
+        /*IntStream.range(0, patterns.length)
+                .parallel()
+                .forEach(i ->*/
         for(int i = 0; i < patterns.length; i++)
         {
+            //TimeDiagnosis td2 = new TimeDiagnosis();
+            //td1.tick();
+            
+            //getNeighbors(patterns[i]).parallelStream().forEach(p ->
             for(Choice<Pattern> p : getNeighbors(patterns[i]))
             {
-                ps = new Pattern[patterns.length];
+                //td2.tick();
+                Pattern[] ps = new Pattern[patterns.length];
                 for(int j = 0; j < patterns.length; j++)
                     if(j == i)
                         ps[j] = p.getElement();
@@ -90,20 +132,27 @@ public abstract class INextSolutionGenerator
                 Solution sol = new Solution(solution, ps);
                 if(sol.isPossible())
                     solutions.add(new Choice(sol, p.getOperator(), p.getImageKind()));
-            }
-        }
+                //avg2.add(td2.tick());
+            }//);
+            //avg1.add(td1.tick());
+        }//);
         
         return solutions;
     }
     
     public Solution selectNextSolution(Solution current) throws SolverException
     {
+        TimeDiagnosis td1 = new TimeDiagnosis();
         List<Choice<Solution>> solutions = getNeighbors(current);
+        avg4.add(td1.tick());
         
         if(solutions.isEmpty())
             throw new SolverException("No more solution possible found.");
         
-        return selectNextSolution(current, solutions);
+        TimeDiagnosis td2 = new TimeDiagnosis();
+        Solution s = selectNextSolution(current, solutions);
+        avg5.add(td2.tick());
+        return s;
     }
     
     protected abstract Solution selectNextSolution(Solution current, List<Choice<Solution>> solutions) throws SolverException;
