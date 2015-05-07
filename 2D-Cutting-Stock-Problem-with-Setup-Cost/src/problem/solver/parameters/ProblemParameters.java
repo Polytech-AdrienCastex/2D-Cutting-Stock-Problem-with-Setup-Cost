@@ -6,22 +6,16 @@ public class ProblemParameters
 {
     public ProblemParameters(int maxNumberOfPatterns, int printPrice, int patternPrice)
     {
-        this.coefs = new double[maxNumberOfPatterns];
-        
-        for(int i = 0; i < this.coefs.length; i++)
-            this.coefs[i] = printPrice;
-        
+        this.printPrice = printPrice;
         this.constant = maxNumberOfPatterns * patternPrice;
         this.maxNumberOfPatterns = maxNumberOfPatterns;
         this.patternPrice = patternPrice;
-        
-        f = new LinearObjectiveFunction(getCoefs(), getConstant());
     }
     
-    private final double[] coefs;
-    public double[] getCoefs()
+    private final int printPrice;
+    public double getPrintPrice()
     {
-        return coefs;
+        return printPrice;
     }
 
     private final double patternPrice;
@@ -40,11 +34,5 @@ public class ProblemParameters
     public int getMaxNumberOfPatterns()
     {
         return maxNumberOfPatterns;
-    }
-    
-    private final LinearObjectiveFunction f;
-    public LinearObjectiveFunction getObjectiveFunction()
-    {
-        return f;
     }
 }

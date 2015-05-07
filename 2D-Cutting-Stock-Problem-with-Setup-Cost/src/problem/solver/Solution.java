@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Random;
+import java.util.stream.Collectors;
 import org.apache.commons.math3.optim.MaxIter;
 import org.apache.commons.math3.optim.PointValuePair;
 import org.apache.commons.math3.optim.linear.LinearConstraint;
@@ -29,10 +30,12 @@ public class Solution implements Comparable
         this.patternKind = parent.patternKind;
         this.problemParameters = parent.problemParameters;
         this.patternPlacement = parent.patternPlacement;
+        this.coefs = parent.coefs;
+        this.f = parent.f;
     }
     public Solution(ProblemParameters problemParameters, PatternKind patternKind, PatternPlacement patternPlacement)
     {
-        this.patterns = new Pattern[problemParameters.getMaxNumberOfPatterns()];
+        this.patterns = null;
         this.fitnessValueSolution = null;
         this.patternKind = patternKind;
         this.problemParameters = problemParameters;
@@ -40,14 +43,25 @@ public class Solution implements Comparable
         
         Random rnd = new Random();
         boolean retry;
+        int nbPatterns = -1;
+        int nbTryAfterNextPatternNumber = 0;
+        diagnosis.TimeDiagnosis td = new TimeDiagnosis();
+        td.tick();
         do
         {
+            if(nbTryAfterNextPatternNumber <= 0)
+            {
+                nbPatterns = (nbPatterns + 1) % (problemParameters.getMaxNumberOfPatterns() - 1) + 1;
+                nbTryAfterNextPatternNumber = 100 * nbPatterns;
+                this.patterns = new Pattern[nbPatterns];
+            }
+            
             retry = false;
             
             for(int i = 0; i < Math.min(patternKind.getNumberOfImages(), patterns.length); i++)
             {
                 double[] imgs = new double[patternKind.getNumberOfImages()];
-                imgs[i] = rnd.nextInt(patternKind.getImageKinds().stream().skip(i).findFirst().get().getMaximumNumber() - 1) + 1;
+                imgs[i] = 1;//rnd.nextInt(2);//rnd.nextInt(patternKind.getImageKinds().stream().skip(i).findFirst().get().getMaximumNumber() - 1) + 1;
                 patterns[i] = new Pattern(imgs);
             }
             
@@ -56,7 +70,7 @@ public class Solution implements Comparable
                 for(int i = patternKind.getNumberOfImages(); i < patterns.length; i++)
                 {
                     double[] imgs = new double[patternKind.getNumberOfImages()];
-                    imgs[i % patternKind.getNumberOfImages()] = rnd.nextInt(patternKind.getImageKinds().stream().skip(i % patternKind.getNumberOfImages()).findFirst().get().getMaximumNumber() - 1) + 1;
+                    imgs[i % patternKind.getNumberOfImages()] = rnd.nextInt(2);//rnd.nextInt(patternKind.getImageKinds().stream().skip(i % patternKind.getNumberOfImages()).findFirst().get().getMaximumNumber() - 1) + 1;
                     patterns[i] = new Pattern(imgs);
                 }
             }
@@ -80,15 +94,18 @@ public class Solution implements Comparable
                         }
                         id = (id + 1) % patterns.length;
                         double[] imgs = Arrays.copyOf(patterns[id].getImageNumber(), patternKind.getNumberOfImages());
-                        imgs[i] = rnd.nextInt(max - 1)/2 + 1;
+                        imgs[i] = 1;//rnd.nextInt(2);//rnd.nextInt(max - 1)/2 + 1;
                         patterns[id] = new Pattern(imgs);
                     } while(!patternPlacement.isPossible(patterns[id]));
                     if(retry)
                         break;
                 }
             }
+            nbTryAfterNextPatternNumber--;
         }
         while(retry || !isPossible());
+        System.out.println(td.tick());
+            System.out.println("Solution de départ trouvée ["+nbPatterns+"]. Application de l'algorithme...");
         /*
             do
             {
@@ -101,35 +118,38 @@ public class Solution implements Comparable
         }
         patterns[patterns.length - 1] = Pattern.createRandomPattern(patternKind, rnd, a());
             } while(!patternPlacement.isPossible(patterns[patterns.length - 1]));*/
-    }
-    
-    protected boolean[] a()
-    {
-        boolean[] images = new boolean[patternKind.getNumberOfImages()];
-        for(int i = 0; i < images.length; i++)
-            images[i] = false;
+            
+            
+        this.coefs = new double[nbPatterns];
         
-        for(int j = 0; j < patterns.length - 1; j++)
-        {
-            double[] values = patterns[j].getImageNumber();
-            for(int i = 0; i < values.length; i++)
-                images[i] |= values[i] > 0;
-        }
-        
-        return images;
+        for(int i = 0; i < this.coefs.length; i++)
+            this.coefs[i] = problemParameters.getPrintPrice();
+        f = new LinearObjectiveFunction(this.coefs, problemParameters.getConstant());
     }
     
     private final PatternPlacement patternPlacement;
     private final ProblemParameters problemParameters;
-    private final Pattern[] patterns;
+    private Pattern[] patterns;
     private final PatternKind patternKind;
+    
+    
+    private final double[] coefs;
+    public double[] getCoefs()
+    {
+        return coefs;
+    }
+    private final LinearObjectiveFunction f;
+    public LinearObjectiveFunction getObjectiveFunction()
+    {
+        return f;
+    }
             
     private PointValuePair fitnessValueSolution;
     private void computeFitnessValue()
     {
         fitnessValueSolution = new SimplexSolver()
                 .optimize(new MaxIter(500),
-                        problemParameters.getObjectiveFunction(),
+                        f,
                         new LinearConstraintSet(getConstraints()),
                         GoalType.MINIMIZE,
                         new NonNegativeConstraint(true));
@@ -167,11 +187,22 @@ public class Solution implements Comparable
     }
     
     private Collection<LinearConstraint> getConstraints()
-    {
+    {/*
         Collection<LinearConstraint> constraints = new ArrayList<>();
         double[] pattern;
         PatternKind pk = patternKind;
-        
+        */
+        return patternKind.getImageKinds()
+                .parallelStream()
+                .map(ik ->
+                {
+                    double[] pattern = new double[patterns.length];
+                    for(int i = 0; i < pattern.length; i++)
+                        pattern[i] = patterns[i].getImageNumber(ik);
+                    return new LinearConstraint(pattern, Relationship.GEQ, ik.getDemand());
+                })
+                .collect(Collectors.toList());
+        /*
         for(ImageKind ik : pk.getImageKinds())
         {
             pattern = new double[patterns.length];
@@ -181,7 +212,7 @@ public class Solution implements Comparable
             constraints.add(new LinearConstraint(pattern, Relationship.GEQ, ik.getDemand()));
         }
         
-        return constraints;
+        return constraints;*/
     }
     
     public Pattern[] getPatterns()

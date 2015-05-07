@@ -39,7 +39,7 @@ public class FinalSolution
     public int getFitness()
     {
         int result = 0;
-        double[] coefs = problemParameters.getCoefs();
+        double[] coefs = solution.getCoefs();
         double[] patterns = solution.getPatternNumbers();
         
         for(int i = 0; i < patterns.length && i < coefs.length; i++)
@@ -65,7 +65,7 @@ public class FinalSolution
     public int getNumberOfPatterns()
     {
         int nb = 0;
-        double[] coefs = problemParameters.getCoefs();
+        double[] coefs = solution.getCoefs();
         double[] patterns = solution.getPatternNumbers();
         
         for(int i = 0; i < patterns.length; i++)
@@ -143,12 +143,13 @@ public class FinalSolution
                     }
                     catch(Exception ex)
                     {
-                        abortException.add(ex);
+                        ex.printStackTrace();
+                        //abortException.add(ex);
                         return null;
                     }
-                }).max(Comparator.comparing(s -> s.getFitnessValue())).get();
-        /*
-        for(int restartId = 0; restartId <= numberOfRestart; restartId++)
+                }).min(Comparator.comparing(s -> s.getFitnessValue())).get();
+        
+        /*for(int restartId = 0; restartId <= numberOfRestart; restartId++)
         {
             if(restartId > 0)
                 System.out.println("Restart n°" + restartId + " out of " + numberOfRestart);

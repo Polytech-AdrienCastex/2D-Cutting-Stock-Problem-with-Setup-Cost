@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import problem.solver.parameters.ImageKind;
 import problem.solver.parameters.PatternKind;
 import problem.solver.patternplacement.ImageLocation;
@@ -28,7 +30,7 @@ public class Ptrn
         blocks = new ArrayList<>();
         
         for(ImageKind ik : pk.getImageKinds())
-            if(nbElmts[ik.getPatternIndex()] > 0)
+            if(nbElmts.length > ik.getPatternIndex() && nbElmts[ik.getPatternIndex()] > 0)
                 blocks.add(new Elmt(ik, nbElmts[ik.getPatternIndex()]));
 
         /* we insert blocks according to their height (by grouping each Elmts with same Id into the same block) */
@@ -40,7 +42,6 @@ public class Ptrn
     public boolean fit()
     {
         ArrayList<Elmt> packed = new ArrayList<>();
-        Node node;
         int nbpcs;
         
         for (Elmt block1 : blocks)
@@ -52,7 +53,8 @@ public class Ptrn
                 /* we try to set the Id-aggregated(nbpcs) block into an empty area */
                 do
                 { /* A big enough area has actually been found for the Id-aggregated(pieces) block constisting in */
-                    if ((node = findNode(this.root, null, block1)) != null)
+                    Node node = findNode(this.root, null, block1);
+                    if (node != null)
                     {
                         block1.setFit(this.splitNode(node, block1));
                         
@@ -134,12 +136,14 @@ public class Ptrn
 
     public List<ImageLocation> getPositions()
     {
-        ArrayList<ImageLocation> posList = new ArrayList<>();
-
+        //ArrayList<ImageLocation> posList = new ArrayList<>();
+        
+        return blocks.parallelStream().flatMap(b -> Stream.of(b.getElmtPositions())).collect(Collectors.toList());
+/*
         blocks.stream().forEach((bl) -> {
             posList.addAll(Arrays.asList(bl.getElmtPositions()));
         });
         
-        return posList;
+        return posList;*/
     }
 }

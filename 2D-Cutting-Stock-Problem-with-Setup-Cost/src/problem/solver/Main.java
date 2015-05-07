@@ -10,6 +10,7 @@ import problem.solver.cutpacking.CutInterfacer;
 import problem.solver.neighborselection.INextSolutionGenerator;
 import problem.solver.neighborselection.TabooMethod;
 import problem.solver.operators.Addition;
+import problem.solver.operators.Annihilator;
 import problem.solver.operators.Div;
 import problem.solver.operators.INeighborOperator;
 import problem.solver.operators.Mul;
@@ -30,8 +31,8 @@ public class Main
         pk.addImageKind(9, 23, 3498);
         pk.addImageKind(19, 23, 3498);
         */
-        //PatternKind pk = FileLoader.loadFromFile(new File("S:\\OptDiscrete\\data\\data_20Salpha.txt"));
-        PatternKind pk = FileLoader.loadFromFile(new File("F:\\OperaPortable\\a.txt"));
+        PatternKind pk = FileLoader.loadFromFile(new File("S:\\OptDiscrete\\data\\data_20Salpha.txt"));
+        //PatternKind pk = FileLoader.loadFromFile(new File("F:\\OperaPortable\\a.txt"));
         
         PatternPlacement ppl = new CutInterfacer(pk);
         
@@ -45,17 +46,11 @@ public class Main
         INextSolutionGenerator generator = new TabooMethod(new INeighborOperator[]
         {
             new Addition(),
-            new Subtraction(),
-            new Mul(2.0),
-            new Div(2.0),
-            new Mul(4.0),
-            new Div(4.0),
-            new Mul(8.0),
-            new Div(8.0)
-        }, pk, ppl, 20);
+            new Subtraction()
+        }, pk, ppl, 50);
         
         ProblemParameters pp = new ProblemParameters(10, 1, 20);
-        FinalSolution fs = FinalSolution.findSolution(10000, 0, pp, pk, generator, ppl);
+        FinalSolution fs = FinalSolution.findSolution(100000, 0, pp, pk, generator, ppl);
         
         for(Pattern p : fs.getSolution().getPatterns())
         {

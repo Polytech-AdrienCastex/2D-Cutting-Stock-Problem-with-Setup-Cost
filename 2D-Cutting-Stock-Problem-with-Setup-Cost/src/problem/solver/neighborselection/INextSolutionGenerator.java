@@ -190,7 +190,7 @@ public abstract class INextSolutionGenerator
         avg4.add(td1.tick());
         
         if(solutions.isEmpty())
-            throw new SolverException("No more solution possible found.");
+            throw new SolverException("No more possible solution found.");
         
         TimeDiagnosis td2 = new TimeDiagnosis();
         Solution s = selectNextSolution(current, solutions);
