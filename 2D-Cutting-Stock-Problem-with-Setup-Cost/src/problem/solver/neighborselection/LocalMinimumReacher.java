@@ -3,7 +3,7 @@ package problem.solver.neighborselection;
 import java.util.Comparator;
 import java.util.List;
 import problem.solver.parameters.PatternKind;
-import problem.solver.Solution;
+import problem.solver.solution.Solution;
 import problem.solver.SolverException;
 import problem.solver.operators.INeighborOperator;
 import problem.solver.patternplacement.PatternPlacement;
@@ -22,5 +22,11 @@ public class LocalMinimumReacher extends INextSolutionGenerator
                 // Minimize the fitness value
                 .min(Comparator.comparing(s -> s.getElement().getFitnessValue()))
                 .get().getElement();
+    }
+
+    @Override
+    public INextSolutionGenerator clone()
+    {
+        return this;
     }
 }

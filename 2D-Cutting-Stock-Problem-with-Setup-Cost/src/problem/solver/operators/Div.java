@@ -26,11 +26,14 @@ public class Div extends INeighborOperator
     @Override
     public double[] getFrom(double[] array, ImageKind imageKind)
     {
-        if(array[imageKind.getPatternIndex()] >= imageKind.getMaximumNumber())
-            return null;
-        
         double[] value = copy(array);
-        value[imageKind.getPatternIndex()] /= 2;
+        value[imageKind.getPatternIndex()] /= coef;
         return value;
+    }
+
+    @Override
+    public boolean canApply(double[] array, ImageKind imageKind)
+    {
+        return (int)(array[imageKind.getPatternIndex()] / coef) <= imageKind.getMaximumNumber();
     }
 }

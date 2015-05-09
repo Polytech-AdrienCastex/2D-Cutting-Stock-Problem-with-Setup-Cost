@@ -10,8 +10,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import problem.solver.Pattern;
-import problem.solver.Solution;
+import java.util.stream.Stream;
+import problem.solver.solution.Pattern;
+import problem.solver.solution.Solution;
 import problem.solver.SolverException;
 import problem.solver.operators.INeighborOperator;
 import problem.solver.parameters.ImageKind;
@@ -31,9 +32,9 @@ public abstract class INextSolutionGenerator
         this.patternPlacement = patternPlacement;
     }
     
-    private final PatternKind patternKind;
-    private final List<INeighborOperator> operators;
-    private final PatternPlacement patternPlacement;
+    protected final PatternKind patternKind;
+    protected final List<INeighborOperator> operators;
+    protected final PatternPlacement patternPlacement;
     
     protected class Choice<T>
     {
@@ -64,85 +65,42 @@ public abstract class INextSolutionGenerator
     
     private List<Choice<Pattern>> getNeighbors(Pattern pattern)
     {
-        //List<Choice<Pattern>> patterns = new ArrayList<>();
-        
-        //TimeDiagnosis td = new TimeDiagnosis();
-        
         return operators
                 .parallelStream()
                 .flatMap(operator ->
-        {
-            return patternKind
-                    .getImageKinds()
-                    .parallelStream()
-                    .map(imageKind ->
-                    {
-                        double[] values = operator.getFrom(pattern.getImageNumber(), imageKind);
-                        if(values != null)
+                {
+                    return patternKind
+                        .getImageKinds()
+                        .parallelStream()
+                        .filter(imageKind -> operator.canApply(pattern.getImageNumber(), imageKind))
+                        .map(imageKind ->
                         {
-                            Pattern newPattern = new Pattern(values);
-
-                            if(patternPlacement == null || patternPlacement.isPossible(newPattern))
-                                return new Choice<Pattern>(newPattern, operator, imageKind);
-                        }
-                        return null;
-                    });
-        }).
-                filter(c -> c != null)
+                            double[] values = operator.getFrom(pattern.getImageNumber(), imageKind);
+                            if(values != null)
+                            {
+                                Pattern newPattern = new Pattern(values, pattern.getIndex());
+                                
+                                if(patternPlacement == null || patternPlacement.isPossible(newPattern))
+                                    return new Choice<Pattern>(newPattern, operator, imageKind);
+                            }
+                            return null;
+                        });
+                })
+                .filter(c -> c != null)
                 .collect(Collectors.toList());
-        /*
-        //operators.parallelStream().forEach(operator -> {
-        for(INeighborOperator operator : operators)
-            
-            for(ImageKind imageKind : patternKind.getImageKinds())
-            {
-                double[] values = operator.getFrom(pattern.getImageNumber(), imageKind);
-                if(values != null)
-                {
-                    Pattern newPattern = new Pattern(values);
-
-                    if(patternPlacement == null || patternPlacement.isPossible(newPattern))
-                        patterns.add(new Choice(newPattern, operator, imageKind));
-                }
-            }/*
-            for(ImageKind imageKind : patternKind.getImageKinds())
-            {
-                double[] values = operator.getFrom(pattern.getImageNumber(), imageKind);
-                if(values != null)
-                {
-                    Pattern newPattern = new Pattern(values);
-
-                    if(patternPlacement == null || patternPlacement.isPossible(newPattern))
-                        return new Choice(newPattern, operator, imageKind);
-                    else
-                        return null;
-                }
-            }});
-        //avg3.add(td.tick());
-        
-        return patterns;*/
     }
     
-    public static AverageMaker avg1 = new AverageMaker();
-    public static AverageMaker avg2 = new AverageMaker();
-    public static AverageMaker avg3 = new AverageMaker();
     public static AverageMaker avg4 = new AverageMaker();
     public static AverageMaker avg5 = new AverageMaker();
     protected List<Choice<Solution>> getNeighbors(Solution solution) throws SolverException
     {
-        //List<Choice<Solution>> solutions = new ArrayList<>();
-        Pattern[] patterns = solution.getPatterns();
+        final Pattern[] patterns = solution.getPatterns();
         
-        //TimeDiagnosis td1 = new TimeDiagnosis();
-        
-        /*IntStream.range(0, patterns.length)
+        return Stream.of(patterns)
                 .parallel()
-                .forEach(i ->*/
-        
-        return Arrays.asList(patterns).parallelStream()
                 .flatMap(p -> getNeighbors(p).stream())
                 .map(p -> {
-                    int id = p.getImageKind().getPatternIndex();
+                    int id = p.getElement().getIndex();
                     Pattern[] ps = new Pattern[patterns.length];
                     for(int j = 0; j < patterns.length; j++)
                         if(j == id)
@@ -151,36 +109,12 @@ public abstract class INextSolutionGenerator
                             ps[j] = patterns[j];
 
                     Solution sol = new Solution(solution, ps);
-                    if(sol.isPossible())
+                    if(!sol.isImageMissing())
                         return new Choice<Solution>(sol, p.getOperator(), p.getImageKind());
                     return null;
-                }).filter(c -> c != null).collect(Collectors.toList());
-        /*
-        for(int i = 0; i < patterns.length; i++)
-        {
-            //TimeDiagnosis td2 = new TimeDiagnosis();
-            //td1.tick();
-            
-            //getNeighbors(patterns[i]).parallelStream().forEach(p ->
-            for(Choice<Pattern> p : getNeighbors(patterns[i]))
-            {
-                //td2.tick();
-                Pattern[] ps = new Pattern[patterns.length];
-                for(int j = 0; j < patterns.length; j++)
-                    if(j == i)
-                        ps[j] = p.getElement();
-                    else
-                        ps[j] = patterns[j];
-                
-                Solution sol = new Solution(solution, ps);
-                if(sol.isPossible())
-                    solutions.add(new Choice(sol, p.getOperator(), p.getImageKind()));
-                //avg2.add(td2.tick());
-            }//);
-            //avg1.add(td1.tick());
-        }//);
-        
-        return solutions;*/
+                })
+                .filter(c -> c != null)
+                .collect(Collectors.toList());
     }
     
     public Solution selectNextSolution(Solution current) throws SolverException
@@ -199,4 +133,5 @@ public abstract class INextSolutionGenerator
     }
     
     protected abstract Solution selectNextSolution(Solution current, List<Choice<Solution>> solutions) throws SolverException;
+    public abstract INextSolutionGenerator clone();
 }

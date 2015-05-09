@@ -20,4 +20,13 @@ public class Annihilator extends INeighborOperator
     {
         return new double[array.length];
     }
+
+    @Override
+    public boolean canApply(double[] array, ImageKind imageKind)
+    {
+        for(double d : array)
+            if(d != 0)
+                return true;
+        return false;
+    }
 }

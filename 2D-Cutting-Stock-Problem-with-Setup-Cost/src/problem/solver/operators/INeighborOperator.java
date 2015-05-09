@@ -26,4 +26,5 @@ public abstract class INeighborOperator
     }
     
     public abstract double[] getFrom(double[] array, ImageKind imageKind);
+    public abstract boolean canApply(double[] array, ImageKind imageKind);
 }

@@ -18,11 +18,14 @@ public class Addition extends INeighborOperator
     @Override
     public double[] getFrom(double[] array, ImageKind imageKind)
     {
-        if(array[imageKind.getPatternIndex()] >= imageKind.getMaximumNumber())
-            return null;
-        
         double[] value = copy(array);
         value[imageKind.getPatternIndex()]++;
         return value;
+    }
+
+    @Override
+    public boolean canApply(double[] array, ImageKind imageKind)
+    {
+        return array[imageKind.getPatternIndex()] < imageKind.getMaximumNumber();
     }
 }

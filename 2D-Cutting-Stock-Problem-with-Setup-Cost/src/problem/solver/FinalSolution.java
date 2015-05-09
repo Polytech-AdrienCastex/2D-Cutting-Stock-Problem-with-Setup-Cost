@@ -1,5 +1,6 @@
 package problem.solver;
 
+import problem.solver.solution.Solution;
 import diagnosis.AverageMaker;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -124,30 +125,37 @@ public class FinalSolution
         //Solution bestSolution = null;
         ArrayList<Exception> abortException = new ArrayList<>();
         
+        System.out.println("maxNumberOfLoop : " + maxNumberOfLoop);
+        System.out.println("numberOfRestart : " + numberOfRestart);
+        
         Solution bestSolution = IntStream.rangeClosed(0, numberOfRestart)
                 .parallel()
                 .mapToObj(restartId -> 
                 {
+                    INextSolutionGenerator g = generator.clone();
+                    Solution bs = null;
                     try
                     {
                         Solution solution = new Solution(problemParameters, pk, pp);
-                        Solution bs = solution;
+                        bs = solution;
                         for(int i = 0; i < maxNumberOfLoop; i++)
                         {
-                            solution = generator.selectNextSolution(solution);
+                            solution = g.selectNextSolution(solution);
                             
                             if(bs.getFitnessValue() > solution.getFitnessValue())
                                 bs = solution;
                         }
-                        return bs;
                     }
+                    catch(SolverException ex)
+                    { }
                     catch(Exception ex)
                     {
                         ex.printStackTrace();
-                        //abortException.add(ex);
-                        return null;
                     }
-                }).min(Comparator.comparing(s -> s.getFitnessValue())).get();
+                    return bs;
+                })
+                .filter(s -> s != null)
+                .min(Comparator.comparing(s -> s.getFitnessValue())).get();
         
         /*for(int restartId = 0; restartId <= numberOfRestart; restartId++)
         {

@@ -1,6 +1,6 @@
 package problem.solver.cutpacking;
 
-import problem.solver.Pattern;
+import problem.solver.solution.Pattern;
 import problem.solver.parameters.PatternKind;
 import problem.solver.patternplacement.ImageLocation;
 import problem.solver.patternplacement.PatternPlacement;

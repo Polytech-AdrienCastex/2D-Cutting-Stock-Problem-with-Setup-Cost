@@ -5,29 +5,33 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import problem.solver.parameters.PatternKind;
-import problem.solver.Solution;
+import problem.solver.solution.Solution;
 import problem.solver.SolverException;
 import problem.solver.operators.INeighborOperator;
+import problem.solver.parameters.ImageKind;
 import problem.solver.patternplacement.PatternPlacement;
+import problem.solver.solution.Pattern;
 
 public class TabooMethod extends INextSolutionGenerator
 {
     public TabooMethod(INeighborOperator[] operators, PatternKind patternKind, PatternPlacement patternPlacement, int numberOfTabooOperations)
     {
         super(operators, patternKind, patternPlacement);
-        
+        System.out.println("numberOfTabooOperations : " + numberOfTabooOperations);
         this.numberOfTabooOperations = numberOfTabooOperations;
         this.tabooList = new LinkedList<>();
         this.tabooListCurrentNumber = 0;
     }
     
-    private final int numberOfTabooOperations;
+    private int numberOfTabooOperations;
     private final Queue<Choice<Solution>> tabooList;
     private int tabooListCurrentNumber;
     
     private void addTaboo(Choice<Solution> solution)
-    {
-        if(tabooListCurrentNumber == numberOfTabooOperations)
+    {/*
+        if(numberOfTabooOperations == 0)
+            numberOfTabooOperations = (solution.getElement().getPatterns().length * solution.getElement().getImageNumbers().length * operators.size())/5;
+        */if(tabooListCurrentNumber == numberOfTabooOperations)
             tabooList.remove();
         else
             tabooListCurrentNumber++;
@@ -46,9 +50,33 @@ public class TabooMethod extends INextSolutionGenerator
                 // Return the value found or throw the exception
                 .orElseThrow(() -> new SolverException("No more solution possible found."));
         
-        if(current.getFitnessValue() < choice.getElement().getFitnessValue())
+        if(current.getFitnessValue() <= choice.getElement().getFitnessValue())
             addTaboo(choice);
+        /*
+        if(current.getFitnessValue() == choice.getElement().getFitnessValue())
+        {
+            Pattern[] ps1 = current.getPatterns();
+            Pattern[] ps2 = choice.getElement().getPatterns();
+            
+            System.out.println("``````````````````````````````````````");
+            for(int p = 0; p < ps1.length; p++)
+                for(ImageKind ik : patternKind.getImageKinds())
+                {
+                    if(ps1[p].getImageNumber(ik) != ps2[p].getImageNumber(ik))
+                        System.out.println("Dif: " + ik.getPatternIndex());
+                }
+            
+            System.out.println(current);
+            System.out.println(choice.getElement());
+            System.out.println("``````````````````````````````````````");
+        }*/
         
         return choice.getElement();
+    }
+
+    @Override
+    public INextSolutionGenerator clone()
+    {
+        return new TabooMethod(operators.stream().toArray(INeighborOperator[]::new), patternKind, patternPlacement, numberOfTabooOperations);
     }
 }

@@ -16,4 +16,11 @@ public class TimeDiagnosis
         startTime = t;
         return time;
     }
+    public long tickMs()
+    {
+        long t = System.currentTimeMillis();
+        long time = t - startTime;
+        startTime = t;
+        return time;
+    }
 }
