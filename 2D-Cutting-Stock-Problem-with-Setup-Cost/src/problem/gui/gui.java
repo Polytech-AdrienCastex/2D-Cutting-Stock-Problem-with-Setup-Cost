@@ -33,7 +33,7 @@ import problem.solver.parameters.ProblemParameters;
 import problem.solver.patternplacement.ImageLocation;
 import problem.solver.patternplacement.PatternPlacement;
 import problem.solver.solution.Pattern;
-import problem.test.FileLoader;
+import problem.loader.FileLoader;
 
 /**
  *

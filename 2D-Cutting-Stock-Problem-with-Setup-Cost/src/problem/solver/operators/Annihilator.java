@@ -7,7 +7,7 @@ public class Annihilator extends INeighborOperator
     public Annihilator()
     {
         super();
-        this.setNegativeOperator(new Subtraction(this));
+        this.setNegativeOperator(new Annihilator(this));
     }
     public Annihilator(INeighborOperator negativeOperator)
     {

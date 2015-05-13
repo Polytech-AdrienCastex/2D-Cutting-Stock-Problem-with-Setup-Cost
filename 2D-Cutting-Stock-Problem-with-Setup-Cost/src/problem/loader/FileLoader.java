@@ -1,4 +1,4 @@
-package problem.test;
+package problem.loader;
 
 import java.io.File;
 import java.io.IOException;

@@ -21,7 +21,7 @@ import problem.solver.operators.Mul;
 import problem.solver.operators.Subtraction;
 import problem.solver.patternplacement.ImageLocation;
 import problem.solver.patternplacement.PatternPlacement;
-import problem.test.FileLoader;
+import problem.loader.FileLoader;
 
 
 public class Main
